@@ -1,4 +1,5 @@
-# Most of this material have been taken from Datacamp courses: https://www.datacamp.com/
+# This material have been taken from the Datacamp course: Foundations of Functional Programming with purrr 
+# https://www.datacamp.com/courses/foundations-of-functional-programming-with-purrr
 
 # Set working directory
 setwd("~/git/personal/SoftDevKnoShare/Data/")
