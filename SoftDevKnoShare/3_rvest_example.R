@@ -2,7 +2,9 @@
 # https://cnfl.extge.co.uk/pages/viewpage.action?spaceKey=BTS&title=Rare+disease+programme+expedited+interpretation+requests
 
 # Load libraries. Not necessary if you have tidyverse loaded
-library(rvest); packageDescription ("rvest", fields = "Version") # "0.3.2"
+library(rvest); packageDescription ("rvest", fields = "Version") # "0.3.2" # Be caareful as loading rvest masks pluck!
+library(httr); packageDescription ("httr", fields = "Version") # "1.3.1"
+
 URL <- "https://cnfl.extge.co.uk/pages/viewpage.action?spaceKey=BTS&title=Rare+disease+programme+expedited+interpretation+requests"
 
 # Identify yourself
