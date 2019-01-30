@@ -1,0 +1,11 @@
+family_id	case_id	variant	acmg_class	tiers	count_participants	mother_sequenced	case_solved_family	assembly
+FM50000281	1312-1	GRCh38:MT:8851:T:C	pathogenic_variant	TIER2:hereditary ataxia	1	False	yes	GRCh37
+FM50000190	1318-1	GRCh38:MT:3460:G:A	pathogenic_variant	TIER2:inherited optic neuropathies	1	False	yes	GRCh37
+FM50000189	1338-1	GRCh38:MT:11778:G:A	pathogenic_variant		1	False	yes	GRCh37
+FM50000179	1387-1	GRCh38:MT:11778:G:A	pathogenic_variant		5	False	yes	GRCh37
+G94993	2857-1	GRCh38:MT:9035:T:C	likely_pathogenic_variant	TIER2:hereditary ataxia,TIER3:early onset dystonia,TIER3:hereditary spastic paraplegia,TIER3:brain channelopathy	2	False	yes	GRCh37
+FM50000196	1316-1	GRCh38:MT:11778:G:A	likely_pathogenic_variant		5	False	yes	GRCh37
+FM50000448	489-1	GRCh38:MT:9185:T:C	pathogenic_variant	TIER2:hereditary ataxia	3	True	yes	GRCh37
+FM50000760	444-1	GRCh38:MT:14459:G:A	pathogenic_variant	TIER2:mitochondrial disorders	3	True	yes	GRCh37
+FM50000195	1315-1	GRCh38:MT:11778:G:A	likely_pathogenic_variant		1	False	yes	GRCh37
+FM50000812	1102-1	GRCh38:MT:3946:G:A	likely_pathogenic_variant		3	True	yes	GRCh37
