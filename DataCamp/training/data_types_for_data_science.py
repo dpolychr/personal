@@ -424,3 +424,276 @@ print(baby_names.keys())
 # Add the 'RANK' of each row as the key and 'NAME' of each row as the value to the existing dictionary.
 # Print the dictionary keys.
 
+# Import the python CSV module
+import csv
+
+# Create a python file object in read mode for the `baby_names.csv` file: csvfile
+csvfile = open('baby_names.csv', 'r')
+
+# Loop over a DictReader on the file
+for row in csv.DictReader(csvfile):
+    # Print each row
+    print(row)
+    # Add the rank and name to the dictionary: baby_names
+    baby_names[row['RANK']] = row['NAME']
+
+# Print the dictionary keys
+print(baby_names.keys())
+
+# Counter: special dictionary used for counting data, measuring frequency
+
+# Using Counter on lists
+# Counter is a powerful tool for counting, validating, and learning more about the elements within a dataset that is found in the collections module. You pass an iterable (list, set, tuple) or a dictionary to the Counter. You can also use the Counter object similarly to a dictionary with key/value assignment, for example counter[key] = value.
+#
+# A common usage for Counter is checking data for consistency prior to using it, so let's do just that. In this exercise, you'll be using data from the Chicago Transit Authority on ridership.
+
+# Import the Counter object from collections.
+# Print the first ten items from the stations list.
+# Create a Counter of the stations list called station_count.
+# Print the station_count.
+
+# Import the Counter object
+from collections import Counter
+
+# Print the first ten items from the stations list
+print(stations[:10])
+
+# Create a Counter of the stations list: station_count
+station_count = Counter(stations)
+
+# Print the station_count
+print(station_count)
+
+# Finding most common elements
+# Another powerful usage of Counter is finding the most common elements in a list. This can be done with the .most_common() method.
+#
+# Practice using this now to find the most common stations in a stations list.
+
+# Import the Counter object from collections.
+# Create a Counter of the stations list called station_count.
+# Print the 5 most common elements.
+
+# Import the Counter object
+from collections import Counter
+
+# Create a Counter of the stations list: station_count
+station_count = Counter(stations)
+
+# Find the 5 most common elements
+print(station_count.most_common(5))
+
+# Defaultdict
+
+# Pass it a default type that every key will have even if it does not currently exist
+# Works exactly like a dic
+
+# Creating dictionaries of an unknown structure
+# Occasionally, you'll need a structure to hold nested data, and you may not be certain that the keys will all actually exist. This can be an issue if you're trying to append items to a list for that key. You might remember the NYC data that we explored in the video. In order to solve the problem with a regular dictionary, you'll need to test that the key exists in the dictionary, and if not, add it with an empty list.
+#
+# You'll be working with a list of entries that contains ridership details on the Chicago transit system. You're going to solve this same type of problem with a much easier solution in the next exercise.
+
+# Create an empty dictionary called ridership.
+# Iterate over entries, unpacking it into the variables date, stop, and riders.
+# Check to see if the date already exists in the ridership dictionary. If it does not exist, create an empty list for the date key.
+# Append a tuple consisting of stop and riders to the date key of the ridership dictionary.
+# Print the ridership for '03/09/2016'.
+
+# Create an empty dictionary: ridership
+ridership = dict()
+
+# Iterate over the entries
+for date, stop, riders in entries:
+    # Check to see if date is already in the dictionary
+    if date not in ridership:
+        # Create an empty list for any missing date
+        ridership[date] = []
+    # Append the stop and riders as a tuple to the date keys list
+    ridership[date].append((stop, riders))
+
+# Print the ridership for '03/09/2016'
+print(ridership['03/09/2016'])
+
+# Safely appending to a key's value list
+# Often when working with dictionaries, you know the data type you want to have each key be; however, some data types such as lists have to be initialized on each key before you can append to that list.
+#
+# A defaultdict allows you to define what each uninitialized key will contain. When establishing a defaultdict, you pass it the type you want it to be, such as a list, tuple, set, int, string, dictionary or any other valid type object.
+
+# Import defaultdict from collections.
+# Create a defaultdict with a default type of list called ridership.
+# Iterate over the list entries, unpacking it into the variables date, stop, and riders, exactly as you did in the previous exercise.
+# Use stop as the key of the ridership dictionary and append riders to its value.
+# Print the first 10 items of the ridership dictionary. You can use the .items() method for this. Remember, you have to convert ridership.items() to a list before slicing.
+
+# Import defaultdict
+from collections import defaultdict
+
+# Create a defaultdict with a default type of list: ridership
+ridership = defaultdict(list)
+
+# Iterate over the entries
+for date, stop, riders in entries:
+    # Use the stop as the key of ridership and append the riders to its value
+    ridership[stop].append(riders)
+
+# Print the first 10 items of the ridership dictionary
+print(list(ridership.items())[:10])
+
+# Order in Python dicts
+# Python version < 3.6 NOT ordered
+
+from collections import OrderedDict
+
+# .popitem() method returns items in reverse insertion order
+
+# Working with OrderedDictionaries
+# # Recently in Python 3.6, dictionaries were made to maintain the order in which the keys were inserted; however, in all versions prior to that you need to use an OrderedDict to maintain insertion order.
+# #
+# # Let's create a dictionary of all the stop times by route and rider, then use it to find the ridership throughout the day.
+
+# Import OrderedDict from collections.
+# Create an OrderedDict called ridership_date.
+# Iterate over the list entries, unpacking it into date and riders.
+# If a key does not exist in ridership_date for the date, set it equal to 0 (if only you could use defaultdict here!)
+# Add riders to the date key of ridership_date.
+# Print the first 31 records. Remember to convert the items into a list.
+
+# Import OrderedDict from collections
+from collections import OrderedDict
+
+# Create an OrderedDict called: ridership_date
+ridership_date = OrderedDict()
+
+# Iterate over the entries
+for date, riders in entries:
+    # If a key does not exist in ridership_date, set it to 0
+    if not date in ridership_date:
+        ridership_date[date] = 0
+
+    # Add riders to the date key in ridership_date
+    ridership_date[date] += riders
+
+# Print the first 31 records
+print(list(ridership_date.items())[:31])
+
+# Powerful Ordered popping
+# Where OrderedDicts really shine is when you need to access the data in the dictionary in the order you added it. OrderedDict has a .popitem() method that will return items in reverse of which they were inserted. You can also pass .popitem() the last=False keyword argument and go through the items in the order of how they were added.
+#
+# Here, you'll use the ridership_date OrderedDict you created in the previous exercise.
+
+# Print the first key in ridership_date (Remember to make keys a list before slicing).
+# Pop the first item from ridership_date and print it.
+# Print the last key in ridership_date.
+# Pop the last item from ridership_date and print it.
+
+# Print the first key in ridership_date
+print(list(ridership_date.keys())[0])
+
+# Pop the first item from ridership_date and print it
+print(ridership_date.popitem(last=False))
+
+# Print the last key in ridership_date
+print(list(ridership_date.keys())[-1])
+
+# Pop the last item from ridership_date and print it
+print(ridership_date.popitem())
+
+# namedtuple is a tuple where each position (column) has a name
+
+# Creating namedtuples for storing data
+# # Often times when working with data, you will use a dictionary just so you can use key names to make reading the code and accessing the data easier to understand. Python has another container called a namedtuple that is a tuple, but has names for each position of the tuple. You create one by passing a name for the tuple type and a list of field names.
+# #
+# # For example, Cookie = namedtuple("Cookie", ['name', 'quantity']) will create a container, and you can create new ones of the type using Cookie('chocolate chip', 1) where you can access the name using the name attribute, and then get the quantity using the quantity attribute.
+# #
+# # In this exercise, you're going to restructure the transit data you've been working with into namedtuples for more descriptive code.
+
+# Import namedtuple from collections.
+# Create a namedtuple called DateDetails with a type name of DateDetails and fields of 'date', 'stop', and 'riders'.
+# Create a list called labeled_entries.
+# Iterate over entries, unpacking it into date, stop, and riders.
+# Create a new DateDetails namedtuple instance for each entry and append it to labeled_entries.
+# Print the first 5 items in labeled_entries. This has been done for you, so hit 'Submit Answer' to see the result!
+
+# Import namedtuple from collections
+from collections import namedtuple
+
+# Create the namedtuple: DateDetails
+DateDetails = namedtuple('DateDetails', ['date', 'stop', 'riders'])
+
+# Create the empty list: labeled_entries
+labeled_entries = []
+
+# Iterate over the entries
+for date, stop, riders in entries:
+    # Append a new DateDetails namedtuple instance for each entry to labeled_entries
+    labeled_entries.append(DateDetails(date, stop, riders))
+
+# Print the first 5 items in labeled_entries
+print(labeled_entries[:5])
+
+# Leveraging attributes on namedtuples
+# Once you have a namedtuple, you can write more expressive code that is easier to understand. Remember, you can access the elements in the tuple by their name as an attribute. For example, you can access the date of the namedtuples in the previous exercise using the .date attribute.
+#
+# Here, you'll use the tuples you made in the previous exercise to see how this works.
+
+# Iterate over the first twenty items in labeled_entries
+for item in labeled_entries[:20]:
+    # Print each item's stop
+    print(item.stop)
+
+    # Print each item's date
+    print(item.date)
+
+    # Print each item's riders
+    print(item.riders)
+
+from urllib.request import urlopen
+
+with urlopen('http://sixty-north.com/c/t.txt') as story:
+    story_words = []
+    for line in story:
+        line_words = line.decode('utf-8').split()
+        for word in line_words:
+            story_words.append(word)
+
+for word in story_words:
+    print(word)
+
+# Strings to DateTimes
+# Time to begin your DateTime journey! You'll start by using the .strptime() method from the datetime object as shown in the video, passing it both the string and the format. A full list of the format string components is available in the Python documentation.
+#
+# You'll be using the datetime column from the Chicago Transist Authority data, which is available as dates_list. Feel free to explore it in the IPython Shell: You'll see that it has the format of Month, Day, Year.
+
+# Import the datetime object from datetime.
+# Iterate over the dates_list, using date_str as your iterator variable.
+# Convert each date_str into a datetime object called date_dt using the datetime.strptime() function, with '%m/%d/%Y' as your format.
+# Print each date_dt.
+
+# Import the datetime object from datetime
+from datetime import datetime
+
+# Iterate over the dates_list
+for date_str in dates_list:
+    # Convert each date to a datetime object: date_dt
+    date_dt = datetime.strptime(date_str, '%m/%d/%Y')
+
+    # Print each date_dt
+    print(date_dt)
+
+# Converting to a String
+# Converting from a datetime object to a string is done with the .strftime() method on a instance of the datetime object. You pass a format string just like the ones used in the prior exercise.
+#
+# There is also a widely used string output standard called ISO-8601. It has a shortcut method named .isoformat(). I encourage you to use it anytime you write out to a file.
+#
+# All the datetimes you created for the transit data in the prior exercise are saved in the datetimes_list.
+
+# Loop over the first 10 items of the datetimes_list, using item as your iterator variable.
+# Print out the item as a string in the format of 'MM/DD/YYYY'. For this, the format string is '%m/%d/%Y'.
+# Print out the item as an ISO standard string.
+
+# Loop over the first 10 items of the datetimes_list
+for item in datetimes_list[:10]:
+    # Print out the record as a string in the format of 'MM/DD/YYYY'
+    print(datetime.strftime(item, '%m/%d/%Y'))
+
+    # Print out the record as an ISO standard string
+    print(item.isoformat())
