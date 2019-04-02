@@ -697,3 +697,188 @@ for item in datetimes_list[:10]:
 
     # Print out the record as an ISO standard string
     print(item.isoformat())
+
+# Pieces of Time
+# When working with datetime objects, you'll often want to group them by some component of the datetime such as the month, year, day, etc. Each of these are available as attributes on an instance of a datetime object.
+#
+# You're going to work with the summary of the CTA's daily ridership. It contains the following columns, in order: service_date, day_type, bus, rail_boardings, and total_rides. The modules defaultdict and datetime have already been imported for you.
+
+# Create a defaultdict of an integer called monthly_total_rides.
+# Loop over the list daily_summaries, which contains the columns mentioned above in the assignment text.
+# Convert the service_date (1st element of daily_summary) to a datetime object called service_datetime. Use '%m/%d/%Y' as your format string.
+# Use the month of the service_datetime as the dict key and add the total_rides (5th element of daily_summary) to the current amount for the month. Be sure to convert this into an integer.
+# Print monthly_total_rides.
+
+# Create a defaultdict of an integer: monthly_total_rides
+monthly_total_rides = defaultdict(int)
+
+# Loop over the list daily_summaries
+for daily_summary in daily_summaries:
+    # Convert the service_date to a datetime object
+    service_datetime = datetime.strptime(daily_summary[0], '%m/%d/%Y')
+
+    # Add the total rides to the current amount for the month
+    monthly_total_rides[service_datetime.month] += int(daily_summary[4])
+
+# Print monthly_total_rides
+print(monthly_total_rides)
+
+# Creating DateTime Objects... Now
+# Often when working with datetime objects, you'll want to work on windows or ranges that start from the current date and time. You can do this using the datetime now functions. There is a .now() method on the datetime object in the datetime module and a .utcnow() method. The .now() method returns the current local time on the machine on which it is run, and .utcnow() does the same thing but returns the value in UTC time. You'll need to be very familiar with these methods.
+#
+# No dataset is used in this exercise, but bear with us as you'll need to do this often to compare year/month-to-date etc.
+
+from datetime import datetime
+
+# Import datetime from the datetime module
+from datetime import datetime
+
+# Compute the local datetime: local_dt
+local_dt = datetime.now()
+
+# Print the local datetime
+print(local_dt)
+
+# Compute the UTC datetime: utc_dt
+utc_dt = datetime.utcnow()
+
+# Print the UTC datetime
+print(utc_dt)
+
+# Timezones
+# In order to work effectively with other timezones, you can use the pytz library. To use timezones, you need to import the timezone object from the pytz module. Then you can use the timezone constructor and pass it a name of a timezone, such as CT = timezone('US/Central'). You can get a full list of timezone names at Wikipedia. In Python 3, you can make a datetime object "aware" by passing a timezone as the tzinfo keyword argument to the .replace() method on a datetime instance.
+#
+# An "aware" datetime object has an .astimezone() method that accepts a timezone object and returns a new datetime object in the desired timezone. If the tzinfo is not set for the datetime object it assumes the timezone of the computer you are working on.
+#
+# A list, daily_summaries, has been supplied for you it contains the datetime and rail ridership for trains going to New York. You need to determine the time in New York so you can align it with the New York Transit Authority data.
+
+# Create a Timezone object for Chicago ('US/Central') called chicago_usa_tz.
+# Create a Timezone object for New York ('US/Eastern') called ny_usa_tz.
+# Iterate over the daily_summaries, unpacking it into the variables orig_dt and ridership.
+# Make the orig_dt timezone "aware" for Chicago, using chicago_usa_tz. Store the result in chicago_dt.
+# Convert chicago_dt to the New York timezone, ny_dt.
+# Print the chicago_dt, ny_dt, and ridership
+
+# Create a Timezone object for Chicago
+chicago_usa_tz = timezone('US/Central')
+
+# Create a Timezone object for New York
+ny_usa_tz = timezone('US/Eastern')
+
+# Iterate over the daily_summaries list
+for orig_dt, ridership in daily_summaries:
+    # Make the orig_dt timezone "aware" for Chicago
+    chicago_dt = orig_dt.replace(tzinfo=chicago_usa_tz)
+
+    # Convert chicago_dt to the New York Timezone
+    ny_dt = chicago_dt.astimezone(ny_usa_tz)
+
+    # Print the chicago_dt, ny_dt, and ridership
+    print('Chicago: %s, NY: %s, Ridership: %s' % (chicago_dt, ny_dt, ridership))
+
+# Finding a time in the future and from the past
+# Another common case when working with times is to get a date 30, 60, or 90 days in the past from some date. In Python, the timedelta object from the datetime module is used to represent differences in datetime objects. You can create a timedelta by passing any number of keyword arguments such as days, seconds, microseconds, milliseconds, minutes, hours, and weeks to timedelta().
+#
+# Once you have a timedelta object, you can add or subtract it from a datetime object to get a datetime object relative to the original datetime object.
+#
+# A dictionary, daily_summaries, has been supplied for you. It contains the datetime as the key with a dict as the value that has 'day_type' and 'total_ridership' keys. A list of datetimes to review called review_dates is also available.
+
+# Import timedelta from the datetime module.
+# Build a timedelta of 30 days called glanceback using timedelta().
+# Iterate over the review_dates, using date as your iterator variable.
+# Calculate the date 30 days back by subtracting glanceback from date.
+# Print the date, along with 'day_type' and 'total_ridership' from daily_summaries for that date.
+# Print the prior_period_dt, along with 'day_type' and 'total_ridership' from daily_summaries for that date (prior_period_dt).
+
+# Import timedelta from the datetime module
+from datetime import timedelta
+
+# Build a timedelta of 30 days: glanceback
+glanceback = timedelta(days=30)
+
+# Iterate over the review_dates as date
+for date in review_dates:
+    # Calculate the date 30 days back: prior_period_dt
+    prior_period_dt = date - glanceback
+
+    # Print the review_date, day_type and total_ridership
+    print('Date: %s, Type: %s, Total Ridership: %s' %
+          (date,
+           daily_summaries[date]['day_type'],
+           daily_summaries[date]['total_ridership']))
+
+    # Print the prior_period_dt, day_type and total_ridership
+    print('Date: %s, Type: %s, Total Ridership: %s' %
+          (prior_period_dt,
+           daily_summaries[prior_period_dt]['day_type'],
+           daily_summaries[prior_period_dt]['total_ridership']))
+
+# Finding differences in DateTimes
+# Just like you were able to subtract a timedelta from a datetime to find a date in the past, you can also calculate the difference between two dates to get the timedelta between in return. Here, you'll find out how much time has elapsed between two transit dates.
+#
+# A list of tuples called date_ranges is provided for you. We took the dates from our dataset at every 30th record, and we paired up the records into tuples in a stepwise fashion.
+
+# Iterate over date_ranges, unpacking it into start_date and end_date.
+# Print the end_date and start_date using the same print() function.
+# Print the difference between each end_date and start_date
+
+# Iterate over the date_ranges
+for start_date, end_date in date_ranges:
+    # Print the End and Start Date
+    print(end_date, start_date)
+    # Print the difference between each end and start date
+    print(end_date - start_date)
+
+# Localizing time with pendulum
+# Here, you're going to use pendulum to practice doing some common datetime operations!
+
+# Import the pendulum module.
+# Create a now datetime for Tokyo ('Asia/Tokyo') called tokyo_dt.
+# Covert tokyo_dt to Los Angeles time ('America/Los_Angeles'). Store the result as la_dt.
+# Print the ISO 8601 string of la_dt, using the .to_iso8601_string() method.
+
+# Import the pendulum module
+import pendulum
+
+# Create a now datetime for Tokyo: tokyo_dt
+tokyo_dt = pendulum.now('Asia/Tokyo')
+
+# Covert the tokyo_dt to Los Angeles: la_dt
+la_dt = tokyo_dt.in_timezone('America/Los_Angeles')
+
+# Print the ISO 8601 string of la_dt
+print(la_dt.to_iso8601_string())
+
+# Humanizing Differences with Pendulum
+# Pendulum provides a powerful way to convert strings to pendulum datetime objects via the .parse() method. Just pass it a date string and it will attempt to convert into a valid pendulum datetime. By default, .parse() can process dates in ISO 8601 format. To allow it to parse other date formats, pass strict = False.
+#
+# It also has a wonderful alternative to timedelta. When calculating the difference between two dates by subtraction, pendulum provides methods such as .in_days() to output the difference in a chosen metric. These are just the beginning of what pendulum can do for you.
+#
+# A list of tuples called date_ranges is provided for you. This is the same list of tuples that contain two dates that was used a few exercises prior. You'll be focusing on comparing ranges of records.
+#
+# You can learn more in the pendulum documentation. Here, it has been imported for you.
+
+# Iterate over the date_ranges list, unpacking it into start_date and end_date. These dates are not in ISO 8601 format.
+# Use pendulum to convert the start_date string to a pendulum date called start_dt.
+# Use pendulum to convert the end_date string to pendulum date called end_dt.
+# Calculate the difference between end_dt and start_dt. Store the result as diff_period.
+# Print the difference in days, using the .in_days() method.
+
+# Iterate over date_ranges
+for start_date, end_date in date_ranges:
+    # Convert the start_date string to a pendulum date: start_dt
+    start_dt = pendulum.parse(start_date, strict=False)
+
+    # Convert the end_date string to a pendulum date: end_dt
+    end_dt = pendulum.parse(end_date, strict=False)
+
+    # Print the End and Start Date
+    print(end_dt, start_dt)
+
+    # Calculate the difference between end_dt and start_dt: diff_period
+    diff_period = end_dt - start_dt
+
+    # Print the difference in days
+    print(diff_period.in_days())
+
+# Create and use a Counter with a
