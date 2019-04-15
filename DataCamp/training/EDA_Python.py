@@ -103,3 +103,108 @@ print(np.mean(full_term_weight))
 # Use Boolean Series and logical operators to select single, full-term babies and compute their mean birth weight.
 # For comparison, select multiple, full-term babies and compute their mean birth weight.
 
+# Filter preterm babies
+preterm = sample['prglngth'] < 37
+
+# Filter single births
+single = sample['nbrnaliv'] == 1
+
+# Compute birth weight for single full-term babies
+single_full_term_weight = birth_weight[~preterm & single]
+print('Single full-term mean:', single_full_term_weight.mean())
+
+# Compute birth weight for multiple full-term babies
+mult_full_term_weight = birth_weight[~preterm & ~single]
+print('Multiple full-term mean:', mult_full_term_weight.mean())
+
+plt.hist(educ.dropna(), label='educ')
+
+plt.show()
+
+# PMF or probabilty Mass Function that contains the unique values in the dataset and how often each one appears
+
+# Make a PMF
+# The GSS dataset has been pre-loaded for you into a DataFrame called gss. You can explore it in the IPython Shell to get familiar with it.
+#
+# In this exercise, you'll focus on one variable in this dataset, 'year', which represents the year each respondent was interviewed.
+
+# Plot a PMF
+# Now let's plot a PMF for the age of the respondents in the GSS dataset. The variable 'age' contains respondents' age in years.
+
+# Select the age column
+age = gss['age']
+
+# Make a PMF of age
+pmf_age = Pmf(age)
+
+# Plot the PMF
+pmf_age.bar()
+
+# Label the axes
+plt.xlabel('Age')
+plt.ylabel('PMF')
+plt.show()
+
+# PMF represents the possible values in a distribution and their probabilities
+# CDF or Cumulative Distribution Functions; great way to visualise and compare distributions
+
+# From PMF to CDF
+# If you draw a random element from a distribution:
+
+# - PMF (Probability Mass Function) is the probability that you get exactly x
+# - CDF (Cumulative Distribution Function) is the probability you get a value   <= x for a given value of x
+
+# CDF is an invertible function which means that if u have a prob p you can look up the corresponding quantity q
+
+# The distance from the 25th to the 75th percentile is called the IQR. It measures the spread of the distribution so it is similar to sd or variance
+
+# IQR can be more robust than variance
+
+# Compute IQR
+# Recall from the video that the interquartile range (IQR) is the difference between the 75th and 25th percentiles. It is a measure of variability that is robust in the presence of errors or extreme values.
+#
+# In this exercise, you'll compute the interquartile range of income in the GSS dataset. Income is stored in the 'realinc' column, and the CDF of income has already been computed and stored in cdf_income.
+
+# Calculate the 75th percentile
+percentile_75th = cdf_income.inverse(0.75)
+
+# Calculate the 25th percentile
+percentile_25th = cdf_income.inverse(0.25)
+
+# Calculate the interquartile range
+iqr = percentile_75th - percentile_25th
+
+# Print the interquartile range
+print(iqr)
+
+# Plot a CDF
+# The distribution of income in almost every country is long-tailed; that is, there are a small number of people with very high incomes.
+#
+# In the GSS dataset, the variable 'realinc' represents total household income, converted to 1986 dollars. We can get a sense of the shape of this distribution by plotting the CDF.
+
+# Select realinc
+income = gss['realinc']
+
+# Make the CDF
+cdf_income = Cdf(income)
+
+# Plot it
+cdf_income.plot()
+
+# Label the axes
+plt.xlabel('Income (1986 USD)')
+plt.ylabel('CDF')
+plt.show()
+
+# Comparing distributionsm, in general CDFs are smoother thatn PMFs
+
+# Extract education levels
+# Let's create Boolean Series to identify respondents with different levels of education.
+#
+# In the U.S, 12 years of education usually means the respondent has completed high school (secondary education). A respondent with 14 years of education has probably completed an associate degree (two years of college); someone with 16 years has probably completed a bachelor's degree (four years of college).
+
+# Complete the line that identifies respondents with associate degrees, that is, people with more than 14 years of education but less than 16.
+# Complete the line that identifies respondents with 12 or fewer years of education.
+# Confirm that the mean of high is the fraction we computed in the previous exercise, about 53%.
+
+
