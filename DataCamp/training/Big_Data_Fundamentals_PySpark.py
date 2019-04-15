@@ -101,3 +101,19 @@ print("Numbers divisible by 10 are:", filtered_list)
 #
 # Remember you already have a SparkContext sc available in your workspace.
 
+# Create an RDD from a list of words
+RDD = sc.parallelize(["Spark", "is", "a", "framework", "for", "Big Data processing"])
+
+# Print out the type of the created object
+print("The type of RDD is", type(RDD))
+
+# RDDs from External Datasets
+# PySpark can easily create RDDs from files that are stored in external storage devices such as HDFS (Hadoop Distributed File System), Amazon S3 buckets, etc. However, the most common method of creating RDD's is from files stored in your local file system. This method takes a file path and reads it as a collection of lines. In this exercise, you'll create an RDD from the file path (file_path) with the file name README.md which is already available in your workspace.
+#
+# Remember you already have a SparkContext sc available in your workspace.
+
+# Print the file_path in the PySpark shell.
+# Create an RDD named fileRDD from a file_path with the file name README.md.
+# Print the type of the fileRDD created.
+
+
