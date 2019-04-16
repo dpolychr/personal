@@ -116,4 +116,30 @@ print("The type of RDD is", type(RDD))
 # Create an RDD named fileRDD from a file_path with the file name README.md.
 # Print the type of the fileRDD created.
 
+# Print the file_path
+print("The file_path is", file_path)
+
+# Create a fileRDD from file_path
+fileRDD = sc.textFile(file_path)
+
+# Check the type of fileRDD
+print("The file type of fileRDD is", type(fileRDD))
+
+# Partitions in your data
+# SparkContext's textFile() method takes an optional second argument called minPartitions for specifying the minimum number of partitions. In this exercise, you'll create an RDD named fileRDD_part with 5 partitions and then compare that with fileRDD that you created in the previous exercise. Refer to the "Understanding Partition" slide in video 2.1 to know the methods for creating and getting the number of partitions in an RDD.
+#
+# Remember, you already have a SparkContext sc, file_path and fileRDD available in your workspace.
+
+# Find the number of partitions that support fileRDD RDD.
+# Create an RDD named fileRDD_part from the file path but create 5 partitions.
+# Confirm the number of partitions in the new fileRDD_part RDD.
+
+# Check the number of partitions in fileRDD
+print("Number of partitions in fileRDD is", fileRDD.getNumPartitions())
+
+# Create a fileRDD_part from file_path with 5 partitions
+fileRDD_part = sc.textFile(file_path, minPartitions = 5)
+
+# Check the number of partitions in fileRDD_part
+print("Number of partitions in fileRDD_part is", fileRDD_part.getNumPartitions())
 
