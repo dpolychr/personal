@@ -146,6 +146,21 @@ print(weather4.head())
 # Reorder the rows of weather1 using the .reindex() method with the list year as the argument, which contains the abbreviations for each month.
 # Reorder the rows of weather1 just as you did above, this time chaining the .ffill() method to replace the null values with the last preceding non-null value.
 
+# Import pandas
+import pandas as pd
+
+# Reindex weather1 using the list year: weather2
+weather2 = weather1.reindex(year)
+
+# Print weather2
+print(weather2)
+
+# Reindex weather1 using the list year with forward-fill: weather3
+weather3 = weather1.reindex(year).ffill()
+
+# Print weather3
+print(weather3)
+
 # Reindexing using another DataFrame Index
 # Another common technique is to reindex a DataFrame using the Index of another DataFrame. The DataFrame .reindex() method can accept the Index of a DataFrame or Series as input. You can access the Index of a DataFrame with its .index attribute.
 #
@@ -178,6 +193,8 @@ common_names = common_names.dropna()
 
 # Print shape of new common_names
 print(common_names.shape)
+
+# parse_dates True to get datetime objects
 
 # Scalar multiplication using asterisk
 # weather.loc['2013-07-01':'2013-07-07', 'PrecipitationIn'] * 2.54
@@ -297,6 +314,16 @@ northeast.append(south).reset_index(drop=True) # drops = True discards the old I
 
 # use ignore_index
 pd.concat([northeast, south], ignore_index=True)
+
+# .append(): Series & DataFrame method
+# Invocation:
+# s1.append(s2)
+# Stacks rows of s2 below s1
+# Method for Series & DataFrames
+
+
+
+
 
 # Appending Series with nonunique Indices
 # The Series bronze and silver, which have been printed in the IPython Shell, represent the 5 countries that won the most bronze and silver Olympic medals respectively between 1896 & 2008. The Indexes of both Series are called Country and the values are the corresponding number of medals won.
