@@ -450,6 +450,79 @@ print("Softmax test accuracy    :", lr_mn.score(X_test, y_test))
 #
 # Notice that lr_ovr never predicts the dark blue class... yikes! Let's explore why this happens by plotting one of the binary classifiers that it's using behind the scenes.
 
+# Create a new logistic regression object (also with C=100) to be used for binary classification.
+# Visualize this binary classifier with plot_classifier... does it look reasonable?
+
+# Print training accuracies
+print("Softmax     training accuracy:", lr_mn.score(X_train, y_train))
+print("One-vs-rest training accuracy:", lr_ovr.score(X_train, y_train))
+
+# Create the binary classifier (class 1 vs. rest)
+lr_class_1 = LogisticRegression(C=100)
+lr_class_1.fit(X_train, y_train==1)
+
+# Plot the binary classifier (class 1 vs. rest)
+plot_classifier(X_train, y_train==1, lr_class_1)
+
+# Nice work! As you can see, the binary classifier incorrectly labels almost all points in class 1 (shown as red triangles in the final plot)! Thus, this classifier is not a very effective component of the one-vs-rest classifier. In general, though, one-vs-rest often works well.
+
+# One-vs-rest SVM
+# As motivation for the next and final chapter on support vector machines, we'll repeat the previous exercise with a non-linear SVM. Once again, the data is loaded into X_train, y_train, X_test, and y_test .
+#
+# Instead of using LinearSVC, we'll now use scikit-learn's SVC object, which is a non-linear "kernel" SVM (much more on what this means in Chapter 4!). Again, your task is to create a plot of the binary classifier for class 1 vs. rest.
+
+# We'll use SVC instead of LinearSVC from now on
+from sklearn.svm import SVC
+
+# Create/plot the binary classifier (class 1 vs. rest)
+svm_class_1 = SVC()
+svm_class_1.fit(X_train, y_train == 1)
+plot_classifier(X_train, y_train ==1, svm_class_1)
+
+# Cool, eh?! The non-linear SVM works fine with one-vs-rest on this dataset because it learns to "surround" class 1.
+
+def plot_classifier(X, y, clf, ax=None, ticks=False, proba=False, lims=None): # assumes classifier "clf" is already fit
+    X0, X1 = X[:, 0], X[:, 1]
+    xx, yy = make_meshgrid(X0, X1, lims=lims)
+
+    if ax is None:
+        plt.figure()
+        ax = plt.gca()
+        show = True
+    else:
+        show = False
+
+    # can abstract some of this into a higher-level function for learners to call
+    cs = plot_contours(ax, clf, xx, yy, cmap=plt.cm.coolwarm, alpha=0.8, proba=proba)
+    if proba:
+        cbar = plt.colorbar(cs)
+        cbar.ax.set_ylabel('probability of red $\Delta$ class', fontsize=20, rotation=270, labelpad=30)
+        cbar.ax.tick_params(labelsize=14)
+    #ax.scatter(X0, X1, c=y, cmap=plt.cm.coolwarm, s=30, edgecolors='k', linewidth=1)
+    labels = np.unique(y)
+    if len(labels) == 2:
+        ax.scatter(X0[y==labels[0]], X1[y==labels[0]], cmap=plt.cm.coolwarm, s=60, c='b', marker='o', edgecolors='k')
+        ax.scatter(X0[y==labels[1]], X1[y==labels[1]], cmap=plt.cm.coolwarm, s=60, c='r', marker='^', edgecolors='k')
+    else:
+        ax.scatter(X0, X1, c=y, cmap=plt.cm.coolwarm, s=50, edgecolors='k', linewidth=1)
+
+    ax.set_xlim(xx.min(), xx.max())
+    ax.set_ylim(yy.min(), yy.max())
+#     ax.set_xlabel(data.feature_names[0])
+#     ax.set_ylabel(data.feature_names[1])
+    if ticks:
+        ax.set_xticks(())
+        ax.set_yticks(())
+#     ax.set_title(title)
+    if show:
+        plt.show()
+    else:
+        return ax
+
+# SVMs are linear classifiers (so far)
+# Trained using the hinge loss and L2 regularization
+
+
 
 
 # The prediction can be of two types: either classification in which a class label is assigned to a new data point or regression wherein a value is assigned to the new data point. Unlike classification, in regression, the mean of all the k-nearest neighbors is assigned to the new data point.
