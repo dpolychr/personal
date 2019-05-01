@@ -1,5 +1,5 @@
 # Also here: https://github.com/IBMDeveloperUK/pandas-workshop
-# Download measurements data from here
+# Download measurements data from here: https://raw.githubusercontent.com/the-pudding/data/master/pockets/measurements.csv
 
 import numpy as np
 import pandas as pd
