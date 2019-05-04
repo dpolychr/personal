@@ -68,4 +68,10 @@ param_grid = {'max_depth': [5, 10, 20]}
 # Out-of-sample performance actually drops for depths greater than 10, due to overfitting
 # More complex is not always better
 
+# Grid search CV for model complexity
+# In the last slide, you saw how most classifiers have one or more hyperparameters that control its complexity. You also learned to tune them using GridSearchCV(). In this exercise, you will perfect this skill. You will experiment with:
+#
+# The number of trees, n_estimators, in a RandomForestClassifier.
+# The maximum depth, max_depth, of the decision trees used in an AdaBoostClassifier.
+# The number of nearest neighbors, n_neighbors, in KNeighborsClassifier
 
