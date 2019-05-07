@@ -1028,3 +1028,166 @@ print(medal_counts.tail())
 # Extract the 'Grand Total' column from totals and assign the result back to totals.
 # Divide the DataFrame medal_counts by totals along each row. You will have to use the .divide() method with the option axis='rows'. Assign the result to fractions.
 # Print first & last 5 rows of the DataFrame fractions. This has been done for you, so hit 'Submit Answer' to see the results!
+
+# Set Index of editions: totals
+totals = editions.set_index('Edition')
+
+# Reassign totals['Grand Total']: totals
+totals = totals['Grand Total']
+
+# Divide medal_counts by totals: fractions
+fractions = medal_counts.divide(totals, axis = 'rows')
+
+# Print first & last 5 rows of fractions
+print(fractions.head())
+print(fractions.tail())
+
+# Computing percentage change in fraction of medals won
+# Here, you'll start with the DataFrames editions, medals, medal_counts, & fractions from prior exercises.
+#
+# To see if there is a host country advantage, you first want to see how the fraction of medals won changes from edition to edition.
+#
+# The expanding mean provides a way to see this down each column. It is the value of the mean with all the data available up to that point in time. If you are interested in learning more about pandas' expanding transformations, this section of the pandas documentation has additional information.
+
+# Create mean_fractions by chaining the methods .expanding().mean() to fractions.
+# Compute the percentage change in mean_fractions down each column by applying .pct_change() and multiplying by 100. Assign the result to fractions_change.
+# Reset the index of fractions_change using the .reset_index() method. This will make 'Edition' an ordinary column.
+# Print the first and last 5 rows of the DataFrame fractions_change. This has been done for you, so hit 'Submit Answer' to see the results!
+
+# Apply the expanding mean: mean_fractions
+mean_fractions = fractions.expanding().mean()
+
+# Compute the percentage change: fractions_change
+fractions_change = mean_fractions.pct_change() * 100
+
+# Reset the index of fractions_change: fractions_change
+fractions_change = fractions_change.reset_index()
+
+# Print first & last 5 rows of fractions_change
+print(fractions_change.head())
+print(fractions_change.tail())
+
+# Building hosts DataFrame
+# Your task here is to prepare a DataFrame hosts by left joining editions and ioc_codes.
+#
+# Once created, you will subset the Edition and NOC columns and set Edition as the Index.
+#
+# There are some missing NOC values; you will set those explicitly.
+#
+# Finally, you'll reset the Index & print the final DataFrame.
+
+# Create the DataFrame hosts by doing a left join on DataFrames editions and ioc_codes (using pd.merge()).
+# Clean up hosts by subsetting and setting the Index.
+# Extract the columns 'Edition' and 'NOC'.
+# Set 'Edition' column as the Index.
+# Use the .loc[] accessor to find and assign the missing values to the 'NOC' column in hosts. This has been done for you.
+# Reset the index of hosts using .reset_index(), which you'll need to save as the hosts DataFrame.
+# Hit 'Submit Answer' to see what hosts looks like!
+
+# Import pandas
+import pandas as pd
+
+# Left join editions and ioc_codes: hosts
+hosts = pd.merge(editions, ioc_codes, how = 'left')
+
+# Extract relevant columns and set index: hosts
+hosts = hosts[['Edition', 'NOC']].set_index('Edition')
+
+# Fix missing 'NOC' values of hosts
+print(hosts.loc[hosts.NOC.isnull()])
+hosts.loc[1972, 'NOC'] = 'FRG'
+hosts.loc[1980, 'NOC'] = 'URS'
+hosts.loc[1988, 'NOC'] = 'KOR'
+
+# Reset Index of hosts: hosts
+hosts = hosts.reset_index()
+
+# Print hosts
+print(hosts)
+
+# Reshaping for analysis
+# This exercise starts off with fractions_change and hosts already loaded.
+#
+# Your task here is to reshape the fractions_change DataFrame for later analysis.
+#
+# Initially, fractions_change is a wide DataFrame of 26 rows (one for each Olympic edition) and 139 columns (one for the edition and 138 for the competing countries).
+#
+# On reshaping with pd.melt(), as you will see, the result is a tall DataFrame with 3588 rows and 3 columns that summarizes the fractional change in the expanding mean of the percentage of medals won for each country in blocks.
+
+# Create a DataFrame reshaped by reshaping the DataFrame fractions_change with pd.melt().
+# You'll need to use the keyword argument id_vars='Edition' to set the identifier variable.
+# You'll also need to use the keyword argument value_name='Change' to set the measured variables.
+# Print the shape of the DataFrames reshaped and fractions_change. This has been done for you.
+# Create a DataFrame chn by extracting all the rows from reshaped in which the three letter code for each country ('NOC') is 'CHN'.
+# Print the last 5 rows of the DataFrame chn using the .tail() method. This has been done for you, so hit 'Submit Answer' to see the results!
+
+# Import pandas
+import pandas as pd
+
+# Reshape fractions_change: reshaped
+reshaped = pd.melt(fractions_change, id_vars='Edition', value_name='Change')
+
+# Print reshaped.shape and fractions_change.shape
+print(reshaped.shape, fractions_change.shape)
+
+# Extract rows from reshaped where 'NOC' == 'CHN': chn
+chn = reshaped[reshaped['NOC'] == 'CHN']
+
+# Print last 5 rows of chn with .tail()
+print(chn.tail())
+
+# Merging to compute influence
+# This exercise starts off with the DataFrames reshaped and hosts in the namespace.
+#
+# Your task is to merge the two DataFrames and tidy the result.
+#
+# The end result is a DataFrame summarizing the fractional change in the expanding mean of the percentage of medals won for the host country in each Olympic edition.
+
+# Merge reshaped and hosts using an inner join. Remember, how='inner' is the default behavior for pd.merge().
+# Print the first 5 rows of the DataFrame merged. This has been done for you. You should see that the rows are jumbled chronologically.
+# Set the index of merged to be 'Edition' and sort the index.
+# Print the first 5 rows of the DataFrame influence. This has been done for you, so hit 'Submit Answer' to see the results!
+
+# Import pandas
+import pandas as pd
+
+# Merge reshaped and hosts: merged
+merged = pd.merge(reshaped, hosts, how = 'inner')
+
+# Print first 5 rows of merged
+print(merged.head())
+
+# Set Index of merged and sort it: influence
+influence = merged.set_index('Edition').sort_index()
+
+# Print first 5 rows of influence
+print(influence.head())
+
+# Plotting influence of host country
+# This final exercise starts off with the DataFrames influence and editions in the namespace. Your job is to plot the influence of being a host country.
+
+# Create a Series called change by extracting the 'Change' column from influence.
+# Create a bar plot of change using the .plot() method with kind='bar'. Save the result as ax to permit further customization.
+# Customize the bar plot of change to improve readability:
+# Apply the method .set_ylabel("% Change of Host Country Medal Count") toax.
+# Apply the method .set_title("Is there a Host Country Advantage?") to ax.
+# Apply the method .set_xticklabels(editions['City']) to ax.
+# Reveal the final plot using plt.show()
+
+# Import pyplot
+import matplotlib.pyplot as plt
+
+# Extract influence['Change']: change
+change = influence['Change']
+
+# Make bar plot of change: ax
+ax = change.plot(kind='bar')
+
+# Customize the plot to improve readability
+ax.set_ylabel("% Change of Host Country Medal Count")
+ax.set_title("Is there a Host Country Advantage?")
+ax.set_xticklabels(editions['City'])
+
+# Display the plot
+plt.show()
+
