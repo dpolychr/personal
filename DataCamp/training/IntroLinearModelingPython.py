@@ -30,3 +30,41 @@ print("The distance traveled is {}".format(distance_traveled))
 # Print the distance predicted and then check whether it is less than or equal to 400.
 # If your car can travel, at most, 400 miles on a full tank, and it takes 8 hours to drive home, will you make it without refilling? You should have answer=True if you'll make it, or answer=False if you will run out of gas.
 
+# Select a time not measured.
+time = 8
+
+# Use the model to compute a predicted distance for that time.
+distance = model(time)
+
+# Inspect the value of the predicted distance traveled.
+print(distance)
+
+# Determine if you will make it without refueling.
+answer = (distance <= 400)
+print(answer)
+
+# Reasons for Modeling: Estimating Relationships
+# Another common application of modeling is to compare two data sets by building models for each, and then comparing the models. In this exercise, you are given data for a road trip two cars took together. The cars stopped for gas every 50 miles, but each car did not need to fill up the same amount, because the cars do not have the same fuel efficiency (MPG). Complete the function efficiency_model(miles, gallons) to estimate efficiency as average miles traveled per gallons of fuel consumed. Use the provided dictionaries car1 and car2, which both have keys car['miles'] and car['gallons'].
+
+# Complete the function definition for efficiency_model(miles, gallons).
+# Use the function to compute the efficiency of the provided cars (dicts car1, car2).
+# Store your answers as car1['mpg'] and car2['mpg'].
+# Indicate which car has the best mpg by setting best_car=1, best_car=2, or best_car=0 if the same.
+
+# Complete the function to model the efficiency.
+def efficiency_model(miles, gallons):
+   return np.mean(miles/gallons)
+
+# Use the function to estimate the efficiency for each car.
+car1['mpg'] = efficiency_model(car1['miles'], car1['gallons'])
+car2['mpg'] = efficiency_model(car2['miles'], car2['gallons'])
+
+# Finish the logic statement to compare the car efficiencies.
+if car1['mpg'] > car2['mpg'] :
+    print('car1 is the best')
+elif car1['mpg'] < car2['mpg'] :
+    print('car2 is the best')
+else:
+    print('the cars have the same efficiency')
+
+# Object Interface
