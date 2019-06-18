@@ -413,6 +413,656 @@ print("{0:.1%} accuracy on test set.".format(acc))
 # These values can be extracted from a trained model using the feature_importances attribute
 # Just like the coefficients produced by the logistic regressor, these feature importance values can be used to perform feature selection since for unimportant features they will be close to 0.
 
+# One advantage of these feature importance values over coefficients is that they are comparable between features by default, since they always sum up to 1
+# Which means we do not have to scale our input data first
 
+# RFE (Recursive Feature Eliminator) with RF
+from sklearn.feature_selection import RFE
+rfe = RFE(estimator=RandomForestClassifier(), n_features_to_select=6, verbose=1)
+rfe.fit(X_train, y_train)
 
+# step parameter to RFE. Here we've set it to 10 so that on each iteration the 10 least important features are dropped.
 
+# Building a random forest model
+# You'll again work on the Pima Indians dataset to predict whether an individual has diabetes. This time using a random forest classifier. You'll fit the model on the training data after performing the train-test split and consult the feature importance values.
+#
+# The feature and target datasets have been pre-loaded for you as X and y. Same goes for the necessary packages and functions.
+
+# Set a 25% test size to perform a 75%-25% train-test split.
+# Fit the random forest classifier to the training data.
+# Calculate the accuracy on the test set.
+# Print the feature importances per feature.
+
+# Perform a 75% training and 25% test data split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Fit the random forest model to the training data
+rf = RandomForestClassifier(random_state=0)
+rf.fit(X_train, y_train)
+
+# Calculate the accuracy
+acc = accuracy_score(y_test, rf.predict(X_test))
+
+# Print the importances per feature
+print(dict(zip(X.columns, rf.feature_importances_.round(2))))
+
+# Print accuracy
+print("{0:.1%} accuracy on test set.".format(acc))
+
+# Good job! The random forest model gets 78% accuracy on the test set and 'glucose' is the most important feature (0.21
+
+# Random forest for feature selection
+# Now lets use the fitted random model to select the most important features from our input dataset X.
+#
+# The trained model from the previous exercise has been pre-loaded for you as rf.
+
+# Create a mask for features with an importance higher than 0.15.
+
+# Create a mask for features importances above the threshold
+mask = rf.feature_importances_ > 0.15
+
+# Prints out the mask
+print(mask)
+
+# Sub-select the most important features by applying the mask to X.
+
+# Create a mask for features importances above the threshold
+mask = rf.feature_importances_ > 0.15
+
+# Apply the mask to the feature dataset X
+reduced_X = X.loc[:, mask]
+
+# prints out the selected column names
+print(reduced_X.columns)
+
+# Recursive Feature Elimination with random forests
+# You'll wrap a Recursive Feature Eliminator around a random forest model to remove features step by step. This method is more conservative compared to selecting features after applying a single importance threshold. Since dropping one feature can influence the relative importances of the others.
+#
+# You'll need these pre-loaded datasets: X, X_train, y_train.
+#
+# Functions and classes that have been pre-loaded for you are: RandomForestClassifier(), RFE(), train_test_split()
+
+# Create a recursive feature eliminator that will select the 2 most important features using a random forest model.
+
+# Wrap the feature eliminator around the random forest model
+rfe = RFE(estimator=RandomForestClassifier(), n_features_to_select=2, verbose=1)
+
+# Fit the recursive feature eliminator to the training data.
+
+# Fit the model to the training data
+rfe.fit(X_train, y_train)
+
+# Create a mask using an attribute of rfe
+mask = rfe.support_
+
+# Apply the mask to the feature dataset X and print the result
+reduced_X = X.loc[:, mask]
+print(reduced_X.columns)
+
+# Change the settings of RFE() to eliminate 2 features at each step
+
+# Set the feature eliminator to remove 2 features on each step
+rfe = RFE(estimator=RandomForestClassifier(), n_features_to_select=2, step=2, verbose=1)
+
+# Fit the model to the training data
+rfe.fit(X_train, y_train)
+
+# Create a mask
+mask = rfe.support_
+
+# Apply the mask to the feature dataset X and print the result
+reduced_X = X.loc[:, mask]
+print(reduced_X.columns)
+
+# How to reduce dimensionality using classification algorithms. Let's see what we can do with regressions
+
+# 20 is the intercept; 5, 2 and 0 are the coefficients of our features, they determine how big an effect each has on the target
+# The third feature has a coefficient of 0 and will therefore have no effect on the target whatsoever
+# It would be best to remove it from the dataset
+y = 20 + 5x1 + 2x2 + 0x3 + error
+
+# LinearRegression has a coeff attribute
+lr.coef_
+
+# Contains a NumPy array with the number of elements equal to the number of input features
+
+# To check how accurate the model's predictions are we can calculate the R-squared value on the test set
+print(lr.score(X_test, y_test))
+
+# Model will try to find optimal values for the intercept and coefficients by minimizing a loss function
+# This function contains the mean sum of the squared differences between actual and predicted values
+
+# Minimizing the MSE (mean squared error) makes the model as accurate as possible.
+
+# However we do not want our model to be super accurate on the training set if that means it no longer generalizes to new data. To avoid this we can introduce regularization
+
+# Tries to make model simple by keeping coefficients low. The strength of regularization can be tweeked with a
+
+# a too low: model might overfit
+# when it's too high model might become too simple
+
+# Creating a LASSO regressor
+# You'll be working on the numeric ANSUR body measurements dataset to predict a persons Body Mass Index (BMI) using the pre-imported Lasso() regressor. BMI is a metric derived from body height and weight but those two features have been removed from the dataset to give the model a challenge.
+#
+# You'll standardize the data first using the StandardScaler() that has been instantiated for you as scaler to make sure all coefficients face a comparable regularizing force trying to bring them down.
+#
+# All necessary functions and classes plus the input datasets X and y have been pre-loaded.
+
+# Set the test size to 30% to get a 70-30% train test split.
+# Fit the scaler on the training features and transform these in one go.
+# Create the Lasso model.
+# Fit it to the scaled training data.
+
+# Set the test size to 30% to get a 70-30% train test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.30, random_state=0)
+
+# Fit the scaler on the training features and transform these in one go
+X_train_std = scaler.fit_transform(X_train)
+
+# Create the Lasso model
+la = Lasso()
+
+# Fit it to the standardized training data
+la.fit(X_train_std, y_train)
+
+# Lasso model results
+# Now that you've trained the Lasso model, you'll score its predictive capacity (R2) on the test set and count how many features are ignored because their coefficient is reduced to zero.
+#
+# The X_test and y_test datasets have been pre-loaded for you.
+#
+# The Lasso() model and StandardScaler() have been instantiated as la and scaler respectively and both were fitted to the training data.
+
+# Transform the test set with the pre-fitted scaler.
+# Calculate the R2 value on the scaled test data.
+# Create a list that has True values when coefficients equal 0.
+# Calculate the total number of features with a coefficient of 0.
+
+# Transform the test set with the pre-fitted scaler
+X_test_std = scaler.transform(X_test)
+
+# Calculate the coefficient of determination (R squared) on X_test_std
+r_squared = la.score(X_test_std, y_test)
+print("The model can predict {0:.1%} of the variance in the test set.".format(r_squared))
+
+# Create a list that has True values when coefficients equal 0
+zero_coef = la.coef_ == 0
+
+# Calculate how many features have a zero coefficient
+n_ignored = sum(zero_coef)
+print("The model has ignored {} out of {} features.".format(n_ignored, len(la.coef_)))
+
+# Good! We can predict almost 85% of the variance in the BMI value using just 9 out of 91 of the features. The R^2 could be higher though.
+
+# Adjusting the regularization strength
+# Your current Lasso model has an R2 score of 84.7%. When a model applies overly powerful regularization it can suffer from high bias, hurting its predictive power.
+#
+# Let's improve the balance between predictive power and model simplicity by tweaking the alpha parameter.
+
+# Find the highest value for alpha that keeps the R2 value above 98% from the options: 1, 0.5, 0.1, and 0.01
+
+# Find the highest alpha value with R-squared above 98%
+la = Lasso(alpha = 0.1, random_state=0)
+
+# Fits the model and calculates performance stats
+la.fit(X_train_std, y_train)
+r_squared = la.score(X_test_std, y_test)
+n_ignored_features = sum(la.coef_ == 0)
+
+# Print peformance stats
+print("The model can predict {0:.1%} of the variance in the test set.".format(r_squared))
+print("{} out of {} features were ignored.".format(n_ignored_features, len(la.coef_)))
+
+# The LassoCV() class will use cross validation to try out different alpha settings and select the best one
+
+# To remove the features to which the Lasso regressor assigned a zero coefficient, we once again create a mask with True values for all non-zero coefficients
+
+# Feature selection with LassoCV
+
+# Feature selection with RF
+
+# Like RFs, gradient boosting is an ensemble method that will calculate feature importance values
+
+# Choose at least two models voting for a feature in order to keep it
+
+# Creating a LassoCV regressor
+# You'll be predicting biceps circumference on a subsample of the male ANSUR dataset using the LassoCV() regressor that automatically tunes the regularization strength (alpha value) using Cross-Validation.
+#
+# The standardized training and test data has been pre-loaded for you as X_train, X_test, y_train, and y_test.
+
+# Create and fit the LassoCV model on the training set.
+# Calculate R2 on the test set.
+# Create a mask for coefficients not equal to zero.
+
+from sklearn.linear_model import LassoCV
+
+# Create and fit the LassoCV model on the training set
+lcv = LassoCV()
+lcv.fit(X_train, y_train)
+print('Optimal alpha = {0:.3f}'.format(lcv.alpha_))
+
+# Calculate R squared on the test set
+r_squared = lcv.score(X_test, y_test)
+print('The model explains {0:.1%} of the test set variance'.format(r_squared))
+
+# Create a mask for coefficients not equal to zero
+lcv_mask = lcv.coef_ != 0
+print('{} features out of {} selected'.format(sum(lcv_mask), len(lcv_mask)))
+
+# Ensemble models for extra votes
+# The LassoCV() model selected 27 out of 32 features. Not bad, but not a spectacular dimensionality reduction either. Let's use two more models to select the 10 features they consider most important using the Recursive Feature Eliminator (RFE).
+#
+# The standardized training and test data has been pre-loaded for you as X_train, X_test, y_train, and y_test.
+
+# Select 10 features with RFE on a GradientBoostingRegressor and drop 3 features on each step.
+
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import GradientBoostingRegressor
+
+# Select 10 features with RFE on a GradientBoostingRegressor, drop 3 features on each step
+rfe_gb = RFE(estimator=GradientBoostingRegressor(),
+             n_features_to_select=10, step=3, verbose=1)
+rfe_gb.fit(X_train, y_train)
+
+# Calculate the R2 on the test set.
+
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import GradientBoostingRegressor
+
+# Select 10 features with RFE on a GradientBoostingRegressor, drop 3 features on each step
+rfe_gb = RFE(estimator=GradientBoostingRegressor(),
+             n_features_to_select=10, step=3, verbose=1)
+rfe_gb.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_gb.score(X_test, y_test)
+print('The model can explain {0:.1%} of the variance in the test set'.format(r_squared))
+
+# Assign the support array of the fitted model to gb_mask
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import GradientBoostingRegressor
+
+# Select 10 features with RFE on a GradientBoostingRegressor, drop 3 features on each step
+rfe_gb = RFE(estimator=GradientBoostingRegressor(),
+             n_features_to_select=10, step=3, verbose=1)
+rfe_gb.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_gb.score(X_test, y_test)
+print('The model can explain {0:.1%} of the variance in the test set'.format(r_squared))
+
+# Assign the support array to gb_mask
+gb_mask = rfe_gb.support_
+
+# Modify the first step to select 10 features with RFE on a RandomForestRegressor() and drop 3 features on each step.
+from sklearn.feature_selection import RFE
+from sklearn.ensemble import RandomForestRegressor
+
+# Select 10 features with RFE on a RandomForestRegressor, drop 3 features on each step
+rfe_rf = RFE(estimator=RandomForestRegressor(),
+             n_features_to_select=10, step=3, verbose=1)
+rfe_rf.fit(X_train, y_train)
+
+# Calculate the R squared on the test set
+r_squared = rfe_rf.score(X_test, y_test)
+print('The model can explain {0:.1%} of the variance in the test set'.format(r_squared))
+
+# Assign the support array to gb_mask
+rf_mask = rfe_rf.support_
+
+# Good job! Inluding the Lasso linear model from the previous exercise, we now have the votes from 3 models on which features are important.
+
+# Combining 3 feature selectors
+# We'll combine the votes of the 3 models you built in the previous exercises, to decide which features are important into a meta mask. We'll then use this mask to reduce dimensionality and see how a simple linear regressor performs on the reduced dataset.
+#
+# The per model votes have been pre-loaded as lcv_mask, rf_mask, and gb_mask and the feature and target datasets as X and y.
+
+# Sum the votes of the three models using np.sum().
+
+# Sum the votes of the three models
+votes = np.sum([lcv_mask, rf_mask, gb_mask], axis=0)
+print(votes)
+
+# Create a mask for features selected by all 3 models.
+
+# Apply the dimensionality reduction on X and print which features were selected.
+
+# Sum the votes of the three models
+votes = np.sum([lcv_mask, rf_mask, gb_mask], axis=0)
+
+# Create a mask for features selected by all 3 models
+meta_mask = votes >= 3
+
+# Apply the dimensionality reduction on X
+X_reduced = X.loc[:, meta_mask]
+print(X_reduced.columns)
+
+# Plug the reduced dataset into the code for simple linear regression that has been written for you.
+
+# Sum the votes of the three models
+votes = np.sum([lcv_mask, rf_mask, gb_mask], axis=0)
+
+# Create a mask for features selected by all 3 models
+meta_mask = votes >= 3
+
+# Apply the dimensionality reduction on X
+X_reduced = X.loc[:, meta_mask]
+
+# Plug the reduced dataset into a linear regression pipeline
+X_train, X_test, y_train, y_test = train_test_split(X_reduced, y, test_size=0.3, random_state=0)
+lm.fit(scaler.fit_transform(X_train), y_train)
+r_squared = lm.score(scaler.transform(X_test), y_test)
+print('The model can explain {0:.1%} of the variance in the test set using {1:} features.'.format(r_squared, len(lm.coef_)))
+
+# Awesome! Using the votes from 3 models you were able to select just 7 features that allowed a simple linear model to get a high accuracy!
+
+# For PCA it's important to scale the features first so that their values are easier to compare
+
+# The coordinates that each point has in this new reference system are called PC
+
+# Manual feature extraction I
+# You want to compare prices for specific products between stores. The features in the pre-loaded dataset sales_df are: storeID, product, quantity and revenue. The quantity and revenue features tell you how many items of a particular product were sold in a store and what the total revenue was. For the purpose of your analysis it's more interesting to know the average price per product.
+
+# Calculate the product price from the quantity sold and total revenue.
+# Drop the quantity and revenue features from the dataset.
+
+# Calculate the price from the quantity sold and revenue
+sales_df['price'] = sales_df['revenue'] / sales_df['quantity']
+
+# Drop the quantity and revenue features
+reduced_df = sales_df.drop(['quantity', 'revenue'], axis=1)
+
+print(reduced_df.head())
+
+# Manual feature extraction II
+# You're working on a variant of the ANSUR dataset, height_df, where a person's height was measured 3 times. Add a feature with the mean height to the dataset and then drop the 3 original features.
+
+# Add a feature with the mean height to the dataset. Use the .mean() method with axis=1.
+# Drop the 3 original height features from the dataset.
+
+# Calculate the mean height
+height_df['height'] = height_df[['height_1', 'height_2', 'height_3']].mean(axis=1)
+
+# Drop the 3 original height features
+reduced_df = height_df.drop(['height_1', 'height_2', 'height_3'], axis=1)
+
+print(reduced_df.head())
+
+# When you are dealing with a dataset with a lot of correlation, the explained variance typically becomes concentrated in the first few components. The remaining components then explain so little variance that they can be dropped
+
+# If you have a lot of highly correlated features, then PCA :-D
+
+# Calculating Principal Components
+# You'll visually inspect a 4 feature sample of the ANSUR dataset before and after PCA using Seaborn's pairplot(). This will allow you to inspect the pairwise correlations between the features.
+#
+# The data has been pre-loaded for you as ansur_df.
+
+# Create a Seaborn pairplot to inspect ansur_df.
+
+# Create a pairplot to inspect ansur_df
+sns.pairplot(ansur_df)
+
+plt.show()
+
+# Create the scaler and standardize the data.
+
+from sklearn.preprocessing import StandardScaler
+
+# Create the scaler and standardize the data
+scaler = StandardScaler()
+ansur_std = scaler.fit_transform(ansur_df)
+
+# Create the PCA() instance and fit and transform the standardized data.
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Create the scaler and standardize the data
+scaler = StandardScaler()
+ansur_std = scaler.fit_transform(ansur_df)
+
+# Create the PCA instance and fit and transform the data with pca
+pca = PCA()
+pc = pca.fit_transform(ansur_std)
+
+# This changes the numpy array output back to a dataframe
+pc_df = pd.DataFrame(pc, columns=['PC 1', 'PC 2', 'PC 3', 'PC 4'])
+
+# Create a pairplot of the principal component dataframe.
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Create the scaler
+scaler = StandardScaler()
+ansur_std = scaler.fit_transform(ansur_df)
+
+# Create the PCA instance and fit and transform the data with pca
+pca = PCA()
+pc = pca.fit_transform(ansur_std)
+pc_df = pd.DataFrame(pc, columns=['PC 1', 'PC 2', 'PC 3', 'PC 4'])
+
+# Create a pairplot of the principal component dataframe
+sns.pairplot(pc_df)
+plt.show()
+
+# Good job! Notice how, in contrast to the input features, none of the principal components are correlated to one another.
+
+# PCA on a larger dataset
+# You'll now apply PCA on a somewhat larger ANSUR datasample with 13 dimensions, once again pre-loaded as ansur_df. The fitted model will be used in the next exercise. Since we are not using the principal components themselves there is no need to transform the data, instead, it is sufficient to fit pca to the data.
+
+# Create the scaler.
+# Standardize the data.
+# Create the PCA() instance.
+# Fit it to the standardized data.
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+# Scale the data
+scaler = StandardScaler()
+ansur_std = scaler.fit_transform(ansur_df)
+
+# Apply PCA
+pca = PCA()
+pca.fit(ansur_std)
+
+# You'll be inspecting the variance explained by the different principal components of the pca instance you created in the previous exercise.
+
+# Print the explained variance ratio per principal component.
+
+# Inspect the explained variance ratio per component
+print(pca.explained_variance_ratio_)
+
+# Print the cumulative sum of the explained variance ratio.
+
+# Print the cumulative sum of the explained variance ratio
+print(pca.explained_variance_ratio_.cumsum())
+
+# When you use PCA for dimensionality reduction, you decide how much of the explained variance you're willing to sacrifice
+
+# two popular dimensionality reduction techniques that can identify non-linear patterns in the original high-dimensional feature space for each disease example: t-Distributed Stochastic Neighbour Embedding (t-SNE) and
+# Uniform Manifold Approximation and Projection (UMAP).
+
+# Boruta algorithm for a single (L=1) stochastic iteration to identify the
+# most important features that drive gene classification based on the entire OMIM disease annotation
+# and compare it against the respective features (where applicable) extracted from the disease-specific
+# cases.
+
+# PCA is not the preferred algorithm to reduce the dimensionality of categorical datasets
+
+# Understanding the components
+# You'll apply PCA to the numeric features of the Pokemon dataset, poke_df, using a pipeline to combine the feature scaling and PCA in one go. You'll then interpret the meanings of the first two components.
+#
+# All relevant packages and classes have been pre-loaded for you (Pipeline(), StandardScaler(), PCA()).
+
+# Build the pipeline
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=2))])
+
+# Fit the pipeline to the dataset and extract the component vectors.
+# Build the pipeline
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=2))])
+
+# Fit it to the dataset and extract the component vectors
+pipe.fit(poke_df)
+vectors = pipe.steps[1][1].components_.round(2)
+
+# Print feature effects
+print('PC 1 effects = ' + str(dict(zip(poke_df.columns, vectors[0]))))
+print('PC 2 effects = ' + str(dict(zip(poke_df.columns, vectors[1]))))
+
+# PCA for feature exploration
+# You'll use the PCA pipeline you've built in the previous exercise to visually explore how some categorical features relate to the variance in poke_df. These categorical features (Type & Legendary) can be found in a separate dataframe poke_cat_df.
+#
+# All relevant packages and classes have been pre-loaded for you (Pipeline(), StandardScaler(), PCA())
+
+# Fit and transform the pipeline to poke_df to extract the principal components.
+
+# Build the pipeline
+pipe = Pipeline([('scaler', StandardScaler()),
+                 ('reducer', PCA(n_components=2))])
+
+# Fit the pipeline to poke_df and transform the data
+pc = pipe.fit_transform(poke_df)
+
+print(pc)
+
+# PCA in a model pipeline
+# We just saw that legendary pokemon tend to have higher stats overall. Let's see if we can add a classifier to our pipeline that detects legendary versus non-legendary pokemon based on the principal components.
+#
+# The data has been pre-loaded for you and split into training and tests datasets: X_train, X_test, y_train, y_test.
+#
+# Same goes for all relevant packages and classes(Pipeline(), StandardScaler(), PCA(), RandomForestClassifier()).
+
+# Add a scaler, PCA limited to 2 components, and random forest classifier with random_state=0 to the pipeline.
+
+# Build the pipeline
+pipe = Pipeline([
+        ('scaler', StandardScaler()),
+        ('reducer', PCA(n_components=2)),
+        ('classifier', RandomForestClassifier(random_state=0))])
+
+# Fit pipeline to the training data
+# Build the pipeline
+pipe = Pipeline([
+        ('scaler', StandardScaler()),
+        ('reducer', PCA(n_components=2)),
+        ('classifier', RandomForestClassifier(random_state=0))])
+
+# Fit the pipeline to the training data
+pipe.fit(X_train, y_train)
+
+# Prints the explained variance ratio
+print(pipe.steps[1][1].explained_variance_ratio_)
+
+# Score the model accuracy on the test set.
+
+# Build the pipeline
+pipe = Pipeline([
+        ('scaler', StandardScaler()),
+        ('reducer', PCA(n_components=2)),
+        ('classifier', RandomForestClassifier(random_state=0))])
+
+# Fit the pipeline to the training data
+pipe.fit(X_train, y_train)
+
+# Score the accuracy on the test set
+accuracy = pipe.score(X_test, y_test)
+
+# Prints the model accuracy
+print('{0:.1%} test set accuracy'.format(accuracy))
+
+# Repeat the process with 3 extracted components.
+# Build the pipeline
+pipe = Pipeline([
+        ('scaler', StandardScaler()),
+        ('reducer', PCA(n_components=3)),
+        ('classifier', RandomForestClassifier(random_state=0))])
+
+# Fit the pipeline to the training data
+pipe.fit(X_train, y_train)
+
+# Score the accuracy on the test set
+accuracy = pipe.score(X_test, y_test)
+
+# Prints the explained variance ratio and accuracy
+print(pipe.steps[1][1].explained_variance_ratio_)
+print('{0:.1%} test set accuracy'.format(accuracy))
+
+# Selecting the proportion of variance to keep
+# You'll let PCA determine the number of components to calculate based on an explained variance threshold that you decide.
+#
+# You'll work on the numeric ANSUR female dataset pre-loaded as ansur_df.
+#
+# All relevant packages and classes have been pre-loaded too (Pipeline(), StandardScaler(), PCA()).
+
+# Pipe a scaler to PCA selecting 80% of the variance.
+
+# Pipe a scaler to PCA selecting 80% of the variance
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=0.8))])
+
+# Fit the pipe to the data.
+# Pipe a scaler to PCA selecting 80% of the variance
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=0.8))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+print('{} components selected'.format(len(pipe.steps[1][1].components_)))
+
+# Increase the proportion of variance to keep to 90%.
+# Let PCA select 90% of the variance
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=0.9))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+print('{} components selected'.format(len(pipe.steps[1][1].components_)))
+
+# Choosing the number of components
+# You'll now make a more informed decision on the number of principal components to reduce your data to using the "elbow in the plot" technique. One last time, you'll work on the numeric ANSUR female dataset pre-loaded as ansur_df.
+#
+# All relevant packages and classes have been pre-loaded for you (Pipeline(), StandardScaler(), PCA()).
+
+# Create a pipeline with a scaler and PCA selecting 10 components.
+# Pipeline a scaler and PCA selecting 10 components
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=10))])
+
+# Fit the pipe to the data.
+# Pipeline a scaler and pca selecting 10 components
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=10))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+# Plot the explained variance ratio.
+# Pipeline a scaler and pca selecting 10 components
+pipe = Pipeline([('scaler', StandardScaler()),
+        		 ('reducer', PCA(n_components=10))])
+
+# Fit the pipe to the data
+pipe.fit(ansur_df)
+
+# Plot the explained variance ratio
+plt.plot(pipe.steps[1][1].explained_variance_ratio_)
+
+plt.xlabel('Principal component index')
+plt.ylabel('Explained variance ratio')
+plt.show()
+
+# PCA for image compression
+# You'll reduce the size of 16 images with hand written digits (MNIST dataset) using PCA.
+#
+# The samples are 28 by 28 pixel gray scale images that have been flattened to arrays with 784 elements each (28 x 28 = 784) and added to the 2D numpy array X_test. Each of the 784 pixels has a value between 0 and 255 and can be regarded as a feature.
+#
+# A pipeline with a scaler and PCA model to select 78 components has been pre-loaded for you as pipe. This pipeline has already been fitted to the entire MNIST dataset except for the 16 samples in X_test.
+#
+# Finally, a function plot_digits has been created for you that will plot 16 images in a grid.
+
+# Plot the MNIST sample data.
