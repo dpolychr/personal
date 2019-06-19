@@ -286,10 +286,73 @@ print(all_survey_data.keys())
 #
 # pandas has been imported as pd. All sheets have been read into the ordered dictionary responses.
 
+# Create an empty data frame, all_responses.
+# Set up a for loop to iterate through the values in responses
+# Append each data frame to all_responses and reassign the result to the same variable name.
 
+# Create an empty data frame
+all_responses = pd.DataFrame()
 
+# Set up for loop to iterate through values in responses
+for df in responses.values():
+  # Print the number of rows being added
+  print("Adding {} rows".format(df.shape[0]))
+  # Append df to all_responses, assign result
+  all_responses = all_responses.append(df)
 
+# Graph employment statuses in sample
+counts = all_responses.groupby("EmploymentStatus").EmploymentStatus.count()
+counts.plot.barh()
+plt.show()
 
+# Good work! You compiled similar spreadsheets into one dataset. This method works well when you know your spreadsheets use the same column names. If they don't, you can end up with lots of NA values where column names don't align.
 
+# Set Boolean columns
+# Datasets may have columns that are most accurately modeled as Boolean values. However, pandas usually loads these as floats by default, since defaulting to Booleans may have undesired effects like turning NA values into Trues.
+#
+# fcc_survey_subset.xlsx contains a string ID column and several True/False columns indicating financial stressors. You'll evaluate which non-ID columns have no NA values and therefore can be set as Boolean, then tell read_excel() to load them as such with the dtype argument.
+#
+# pandas is loaded as pd.
 
+# Count NA values in each column of survey_data with isna() and sum(). Note which columns besides ID.x, if any, have zero NAs.
+
+# Load the data
+survey_data = pd.read_excel("fcc_survey_subset.xlsx")
+
+# Count NA values in each column
+print(survey_data.isna().sum())
+
+# Set dtype to load appropriate column(s) as Boolean data
+survey_data = pd.read_excel("fcc_survey_subset.xlsx",
+                            dtype = {"HasDebt": bool})
+
+# View financial burdens by Boolean group
+print(survey_data.groupby("HasDebt").sum())
+
+# Great work! Modeling True/False data as Booleans can streamline some data manipulation functions and keep spurious summary statistics, like quartile values, from being calculated. If you want to make a column with NA values Boolean, you can load the data, impute missing values, then re-cast the column as Boolean.
+
+# Set custom true/false values
+# In Boolean columns, pandas automatically recognizes certain values, like "TRUE" and 1, as True, and others, like "FALSE" and 0, as False. Some datasets, like survey data, can use unrecognized values, such as "Yes" and "No".
+#
+# For practice purposes, some Boolean columns in the New Developer Survey have been coded this way. You'll make sure they're properly interpreted with the help of the true_values and false_values arguments.
+#
+# pandas is loaded as pd. You can assume the columns you are working with have no missing values.
+
+# Load the Excel file, specifying "Yes" as a true value and "No" as a false value.
+
+# Load file with Yes as a True value and No as a False value
+survey_subset = pd.read_excel("fcc_survey_yn_data.xlsx",
+                              dtype={"HasDebt": bool,
+                              "AttendedBootCampYesNo": bool},
+                              true_values = ["Yes"],
+                              false_values = ["No"])
+
+# View the data
+print(survey_subset.head())
+
+# Use pd.to_datetime() after loading data if parse_dates won't work
+
+# to_datetime() argunents:
+# a. Df and column to convert
+# b. format: string representation of datetime format
 
