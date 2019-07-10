@@ -799,3 +799,747 @@ plt.show()
 #
 # NumPy, pandas, matlotlib.pyplot, and seaborn have been imported for you as np, pd, plt, and sns, respectively.
 
+# Seed the random number generator with 42.
+# Compute the mean time (in units of number of games) between no-hitters.
+# Draw 100,000 samples from an Exponential distribution with the parameter you computed from the mean of the inter-no-hitter times.
+# Plot the theoretical PDF using plt.hist(). Remember to use keyword arguments bins=50, normed=True, and histtype='step'. Be sure to label your axes.
+# Show your plot.
+
+# Seed random number generator
+np.random.seed(42)
+
+# Compute mean no-hitter time: tau
+tau = np.mean(nohitter_times)
+
+# Draw out of an exponential distribution with parameter tau: inter_nohitter_time
+inter_nohitter_time = np.random.exponential(tau, 100000)
+
+# Plot the PDF and label axes
+_ = plt.hist(inter_nohitter_time,
+             bins=50, normed=True, histtype='step')
+_ = plt.xlabel('Games between no-hitters')
+_ = plt.ylabel('PDF')
+
+# Show the plot
+plt.show()
+
+# Do the data follow our story?
+# You have modeled no-hitters using an Exponential distribution. Create an ECDF of the real data. Overlay the theoretical CDF with the ECDF from the data. This helps you to verify that the Exponential distribution describes the observed data.
+#
+# It may be helpful to remind yourself of the function you created in the previous course to compute the ECDF, as well as the code you wrote to plot it.
+
+# Compute an ECDF from the actual time between no-hitters (nohitter_times). Use the ecdf() function you wrote in the prequel course.
+# Create a CDF from the theoretical samples you took in the last exercise (inter_nohitter_time).
+# Plot x_theor and y_theor as a line using plt.plot(). Then overlay the ECDF of the real data x and y as points. To do this, you have to specify the keyword arguments marker = '.' and linestyle = 'none' in addition to x and y inside plt.plot().
+# Set a 2% margin on the plot.
+# Show the plot.
+
+# Create an ECDF from real data: x, y
+x, y = ecdf(nohitter_times)
+
+# Create a CDF from theoretical samples: x_theor, y_theor
+x_theor, y_theor = ecdf(inter_nohitter_time)
+
+# Overlay the plots
+plt.plot(x_theor, y_theor)
+plt.plot(x, y, marker='.', linestyle='none')
+
+# Margins and axis labels
+plt.margins(0.02)
+plt.xlabel('Games between no-hitters')
+plt.ylabel('CDF')
+
+# Show the plot
+plt.show()
+
+# It looks like no-hitters in the modern era of Major League Baseball are Exponentially distributed. Based on the story of the Exponential distribution, this suggests that they are a random process; when a no-hitter will happen is independent of when the last no-hitter was.
+
+# How is this parameter optimal?
+# Now sample out of an exponential distribution with τ being twice as large as the optimal τ. Do it again for τ half as large. Make CDFs of these samples and overlay them with your data. You can see that they do not reproduce the data as well. Thus, the τ you computed from the mean inter-no-hitter times is optimal in that it best reproduces the data.
+#
+# Note: In this and all subsequent exercises, the random number generator is pre-seeded for you to save you some typing.
+
+# Take 10000 samples out of an Exponential distribution with parameter τ1/2 = tau/2.
+# Take 10000 samples out of an Exponential distribution with parameter τ2 = 2*tau.
+# Generate CDFs from these two sets of samples using your ecdf() function.
+# Add these two CDFs as lines to your plot. This has been done for you, so hit 'Submit Answer' to view the plot!
+
+# Plot the theoretical CDFs
+plt.plot(x_theor, y_theor)
+plt.plot(x, y, marker='.', linestyle='none')
+plt.margins(0.02)
+plt.xlabel('Games between no-hitters')
+plt.ylabel('CDF')
+
+# Take samples with half tau: samples_half
+samples_half = np.random.exponential(tau/2, 10000)
+
+# Take samples with double tau: samples_double
+samples_double = np.random.exponential(2*tau, 10000)
+
+# Generate CDFs from these samples
+x_half, y_half = ecdf(samples_half)
+x_double, y_double = ecdf(samples_double)
+
+# Plot these CDFs as lines
+_ = plt.plot(x_half, y_half)
+_ = plt.plot(x_double, y_double)
+
+# Show the plot
+plt.show()
+
+# The process of finding the parameters for which the sum of the squares of the residuals is minimal is called "least squares"
+# np.polyfit performs least square analysis with polynomial functions
+
+# EDA of literacy/fertility data
+# In the next few exercises, we will look at the correlation between female literacy and fertility (defined as the average number of children born per woman) throughout the world. For ease of analysis and interpretation, we will work with the illiteracy rate.
+#
+# It is always a good idea to do some EDA ahead of our analysis. To this end, plot the fertility versus illiteracy and compute the Pearson correlation coefficient. The Numpy array illiteracy has the illiteracy rate among females for most of the world's nations. The array fertility has the corresponding fertility data.
+#
+# Here, it may be useful to refer back to the function you wrote in the previous course to compute the Pearson correlation coefficient.
+
+# Plot fertility (y-axis) versus illiteracy (x-axis) as a scatter plot.
+# Set a 2% margin.
+# Compute and print the Pearson correlation coefficient between illiteracy and fertility
+
+# Plot the illiteracy rate versus fertility
+_ = plt.plot(illiteracy, fertility, marker='.', linestyle='none')
+
+# Set the margins and label axes
+plt.margins(0.02)
+_ = plt.xlabel('percent illiterate')
+_ = plt.ylabel('fertility')
+
+# Show the plot
+plt.show()
+
+# Show the Pearson correlation coefficient
+print(pearson_r(illiteracy, fertility))
+
+# Linear regression
+# We will assume that fertility is a linear function of the female illiteracy rate. That is, f=ai+b, where a is the slope and b is the intercept. We can think of the intercept as the minimal fertility rate, probably somewhere between one and two. The slope tells us how the fertility rate varies with illiteracy. We can find the best fit line using np.polyfit().
+#
+# Plot the data and the best fit line. Print out the slope and intercept. (Think: what are their units?)
+
+# Compute the slope and intercept of the regression line using np.polyfit(). Remember, fertility is on the y-axis and illiteracy on the x-axis.
+# Print out the slope and intercept from the linear regression.
+# To plot the best fit line, create an array x that consists of 0 and 100 using np.array(). Then, compute the theoretical values of y based on your regression parameters. I.e., y = a * x + b.
+# Plot the data and the regression line on the same plot. Be sure to label your axes.
+# Hit 'Submit Answer' to display your plot.
+
+# This is because our linear functions are polynomials of degree 1.
+
+# Plot the illiteracy rate versus fertility
+_ = plt.plot(illiteracy, fertility, marker='.', linestyle='none')
+plt.margins(0.02)
+_ = plt.xlabel('percent illiterate')
+_ = plt.ylabel('fertility')
+
+# Perform a linear regression using np.polyfit(): a, b
+a, b = np.polyfit(illiteracy, fertility, deg=1)
+
+# Print the results to the screen
+print('slope =', a, 'children per woman / percent illiterate')
+print('intercept =', b, 'children per woman')
+
+# Make theoretical line to plot
+x = np.array([0,100])
+y = 0.04979854809063423 * x + 1.888050610636557
+
+# Add regression line to your plot
+_ = plt.plot(x, y)
+
+# Draw the plot
+plt.show()
+
+# How is it optimal?
+# The function np.polyfit() that you used to get your regression parameters finds the optimal slope and intercept. It is optimizing the sum of the squares of the residuals, also known as RSS (for residual sum of squares). In this exercise, you will plot the function that is being optimized, the RSS, versus the slope parameter a. To do this, fix the intercept to be what you found in the optimization. Then, plot the RSS vs. the slope. Where is it minimal?
+
+# Specify the values of the slope to compute the RSS. Use np.linspace() to get 200 points in the range between 0 and 0.1. For example, to get 100 points in the range between 0 and 0.5, you could use np.linspace() like so: np.linspace(0, 0.5, 100).
+# Initialize an array, rss, to contain the RSS using np.empty_like() and the array you created above. The empty_like() function returns a new array with the same shape and type as a given array (in this case, a_vals).
+# Write a for loop to compute the sum of RSS of the slope. Hint: the RSS is given by np.sum((y_data - a * x_data - b)**2). The variable b you computed in the last exercise is already in your namespace. Here, fertility is the y_data and illiteracy the x_data.
+# Plot the RSS (rss) versus slope (a_vals).
+# Hit 'Submit Answer' to see the plot!
+
+# How is it optimal?
+# The function np.polyfit() that you used to get your regression parameters finds the optimal slope and intercept. It is optimizing the sum of the squares of the residuals, also known as RSS (for residual sum of squares). In this exercise, you will plot the function that is being optimized, the RSS, versus the slope parameter a. To do this, fix the intercept to be what you found in the optimization. Then, plot the RSS vs. the slope. Where is it minimal?
+
+# Specify the values of the slope to compute the RSS. Use np.linspace() to get 200 points in the range between 0 and 0.1. For example, to get 100 points in the range between 0 and 0.5, you could use np.linspace() like so: np.linspace(0, 0.5, 100).
+# Initialize an array, rss, to contain the RSS using np.empty_like() and the array you created above. The empty_like() function returns a new array with the same shape and type as a given array (in this case, a_vals).
+# Write a for loop to compute the sum of RSS of the slope. Hint: the RSS is given by np.sum((y_data - a * x_data - b)**2). The variable b you computed in the last exercise is already in your namespace. Here, fertility is the y_data and illiteracy the x_data.
+# Plot the RSS (rss) versus slope (a_vals).
+# Hit 'Submit Answer' to see the plot!
+
+a_vals = np.linspace(0, 0.1, 200)
+
+# Specify slopes to consider: a_vals
+a_vals = np.linspace(0, 0.1, 200)
+
+# Initialize sum of square of residuals: rss
+rss = np.empty_like(a_vals)
+
+# Compute sum of square of residuals for each value of a_vals
+for i, a in enumerate(a_vals):
+    rss[i] = np.sum((fertility - a*illiteracy - b)**2)
+
+# Plot the RSS
+plt.plot(a_vals, rss, '-')
+plt.xlabel('slope (children per woman / percent illiterate)')
+plt.ylabel('sum of square of residuals')
+
+plt.show()
+
+# Anscombe's quartet comprises four data sets that have nearly identical simple descriptive statistics, yet have very different distributions and appear very different when graphed. Each dataset consists of eleven (x,y) points.
+
+# CI quantify uncertainty about the parameter estimates
+# Linear regression on appropriate Anscombe data
+# For practice, perform a linear regression on the data set from Anscombe's quartet that is most reasonably interpreted with linear regression.
+
+# Compute the parameters for the slope and intercept using np.polyfit(). The Anscombe data are stored in the arrays x and y.
+# Print the slope a and intercept b.
+# Generate theoretical x and y data from the linear regression. Your x array, which you can create with np.array(), should consist of 3 and 15. To generate the y data, multiply the slope by x_theor and add the intercept.
+# Plot the Anscombe data as a scatter plot and then plot the theoretical line. Remember to include the marker='.' and linestyle='none' keyword arguments in addition to x and y when to plot the Anscombe data as a scatter plot. You do not need these arguments when plotting the theoretical line.
+# Hit 'Submit Answer' to see the plot!
+
+# Perform linear regression: a, b
+a, b = np.polyfit(x, y, deg=1)
+
+# Print the slope and intercept
+print(a, b)
+
+# Generate theoretical x and y data: x_theor, y_theor
+x_theor = np.array([3, 15])
+y_theor = x_theor * a + b
+
+# Plot the Anscombe data and theoretical line
+_ = plt.plot(x, y, marker = ".", linestyle='none')
+_ = plt.plot(x_theor, y_theor)
+
+# Label the axes
+plt.xlabel('x')
+plt.ylabel('y')
+
+# Show the plot
+plt.show()
+
+# Linear regression on all Anscombe data
+# Now, to verify that all four of the Anscombe data sets have the same slope and intercept from a linear regression, you will compute the slope and intercept for each set. The data are stored in lists; anscombe_x = [x1, x2, x3, x4] and anscombe_y = [y1, y2, y3, y4], where, for example, x2 and y2 are the x and y values for the second Anscombe data set.
+
+# Write a for loop to do the following for each Anscombe data set.
+# Compute the slope and intercept.
+# Print the slope and intercept.
+
+# Iterate through x,y pairs
+for x, y in zip(anscombe_x, anscombe_y):
+    # Compute the slope and intercept: a, b
+    a, b = np.polyfit(x,y, deg=1)
+
+    # Print the result
+    print('slope:', a, 'intercept:', b)
+
+# Bootstrapping: Getting a large number of summary statistics from the resampled dataset
+# The use of resampled data to perform statistical inference
+
+# Bootstrap sample: A resampled array of the data
+# Bootstrap replicate: value of the summary statistic computed from the bootstrap sample
+
+# Resampling engine: np.random.choice()
+# The above is the function to perform the resampling
+# size argument allows us to specify how many samples we want to take out of the array
+# The function does not delete an entry when it samples it out of the array
+
+# Getting the terminology down
+# Getting tripped up over terminology is a common cause of frustration in students. Unfortunately, you often will read and hear other data scientists using different terminology for bootstrap samples and replicates. This is even more reason why we need everything to be clear and consistent for this course. So, before going forward discussing bootstrapping, let's get our terminology down. If we have a data set with n repeated measurements, a bootstrap sample is an array of length n that was drawn from the original data with replacement. What is a bootstrap replicate?
+
+# A single value of a statistic computed from a bootstrap sample.
+
+# Bootstrapping by hand
+# To help you gain intuition about how bootstrapping works, imagine you have a data set that has only three points, [-1, 0, 1]. How many unique bootstrap samples can be drawn (e.g., [-1, 0, 1] and [1, 0, -1] are unique), and what is the maximum mean you can get from a bootstrap sample? It might be useful to jot down the samples on a piece of paper.
+#
+# (These are too few data to get meaningful results from bootstrap procedures, but this example is useful for intuition.)
+
+# There are 27 unique samples, and the maximum mean is 1.
+
+# Visualizing bootstrap samples
+# In this exercise, you will generate bootstrap samples from the set of annual rainfall data measured at the Sheffield Weather Station in the UK from 1883 to 2015. The data are stored in the NumPy array rainfall in units of millimeters (mm). By graphically displaying the bootstrap samples with an ECDF, you can get a feel for how bootstrap sampling allows probabilistic descriptions of data.
+
+# Write a for loop to acquire 50 bootstrap samples of the rainfall data and plot their ECDF.
+# Use np.random.choice() to generate a bootstrap sample from the NumPy array rainfall. Be sure that the size of the resampled array is len(rainfall).
+# Use the function ecdf() that you wrote in the prequel to this course to generate the x and y values for the ECDF of the bootstrap sample bs_sample.
+# Plot the ECDF values. Specify color='gray' (to make gray dots) and alpha=0.1 (to make them semi-transparent, since we are overlaying so many) in addition to the marker='.' and linestyle='none' keyword arguments.
+# Use ecdf() to generate x and y values for the ECDF of the original rainfall data available in the array rainfall.
+# Plot the ECDF values of the original data.
+# Hit 'Submit Answer' to visualize the samples!
+
+for _ in range(50):
+    # Generate bootstrap sample: bs_sample
+    bs_sample = np.random.choice(rainfall, size=len(rainfall))
+
+    # Compute and plot ECDF from bootstrap sample
+    x, y = ecdf(bs_sample)
+    _ = plt.plot(x, y, marker='.', linestyle='none',
+                 color='gray', alpha=0.1)
+
+# Compute and plot ECDF from original data
+x, y = ecdf(rainfall)
+_ = plt.plot(x, y, marker='.')
+
+# Make margins and label axes
+plt.margins(0.02)
+_ = plt.xlabel('yearly rainfall (mm)')
+_ = plt.ylabel('ECDF')
+
+# Show the plot
+plt.show()
+
+# Function to generate a bootstrap replicate
+
+# Generating many bootstrap replicates
+# The function bootstrap_replicate_1d() from the video is available in your namespace. Now you'll write another function, draw_bs_reps(data, func, size=1), which generates many bootstrap replicates from the data set. This function will come in handy for you again and again as you compute confidence intervals and later when you do hypothesis tests.
+#
+# For your reference, the bootstrap_replicate_1d() function is provided below:
+#
+# def bootstrap_replicate_1d(data, func):
+#     return func(np.random.choice(data, size=len(data)))
+
+# Define a function with call signature draw_bs_reps(data, func, size=1).
+# Using np.empty(), initialize an array called bs_replicates of size size to hold all of the bootstrap replicates.
+# Write a for loop that ranges over size and computes a replicate using bootstrap_replicate_1d(). Refer to the exercise description above to see the function signature of bootstrap_replicate_1d(). Store the replicate in the appropriate index of bs_replicates.
+# Return the array of replicates bs_replicates. This has already been done for you.
+
+def draw_bs_reps(data, func, size=1):
+    """Draw bootstrap replicates."""
+
+    # Initialize array of replicates: bs_replicates
+    bs_replicates = np.empty(size=size)
+
+    # Generate replicates
+    for i in range(size):
+        bs_replicates[i] = bootstrap_replicate_1d(data, func)
+
+    return bs_replicates
+
+# Bootstrap replicates of the mean and the SEM
+# In this exercise, you will compute a bootstrap estimate of the probability density function of the mean annual rainfall at the Sheffield Weather Station. Remember, we are estimating the mean annual rainfall we would get if the Sheffield Weather Station could repeat all of the measurements from 1883 to 2015 over and over again. This is a probabilistic estimate of the mean. You will plot the PDF as a histogram, and you will see that it is Normal.
+#
+# In fact, it can be shown theoretically that under not-too-restrictive conditions, the value of the mean will always be Normally distributed. (This does not hold in general, just for the mean and a few other statistics.) The standard deviation of this distribution, called the standard error of the mean, or SEM, is given by the standard deviation of the data divided by the square root of the number of data points. I.e., for a data set, sem = np.std(data) / np.sqrt(len(data)). Using hacker statistics, you get this same result without the need to derive it, but you will verify this result from your bootstrap replicates.
+#
+# The dataset has been pre-loaded for you into an array called rainfall
+
+# Draw 10000 bootstrap replicates of the mean annual rainfall using your draw_bs_reps() function and the rainfall array. Hint: Pass in np.mean for func to compute the mean.
+# As a reminder, draw_bs_reps() accepts 3 arguments: data, func, and size.
+# Compute and print the standard error of the mean of rainfall.
+# The formula to compute this is np.std(data) / np.sqrt(len(data)).
+# Compute and print the standard deviation of your bootstrap replicates bs_replicates.
+# Make a histogram of the replicates using the normed=True keyword argument and 50 bins.
+# Hit 'Submit Answer' to see the plot!
+
+# Take 10,000 bootstrap replicates of the mean: bs_replicates
+bs_replicates = draw_bs_reps(rainfall, np.mean, 10000)
+
+# Compute and print SEM
+sem = np.std(rainfall) / np.sqrt(len(rainfall))
+print(sem)
+
+# Compute and print standard deviation of bootstrap replicates
+bs_std = np.std(bs_replicates)
+print(bs_std)
+
+# Make a histogram of the results
+_ = plt.hist(bs_replicates, bins=50, normed=True)
+_ = plt.xlabel('mean annual rainfall (mm)')
+_ = plt.ylabel('PDF')
+
+# Show the plot
+plt.show()
+
+# Confidence intervals of rainfall data
+# A confidence interval gives upper and lower bounds on the range of parameter values you might expect to get if we repeat our measurements. For named distributions, you can compute them analytically or look them up, but one of the many beautiful properties of the bootstrap method is that you can take percentiles of your bootstrap replicates to get your confidence interval. Conveniently, you can use the np.percentile() function.
+#
+# Use the bootstrap replicates you just generated to compute the 95% confidence interval. That is, give the 2.5th and 97.5th percentile of your bootstrap replicates stored as bs_replicates. What is the 95% confidence interval?
+
+# Bootstrap replicates of other statistics
+# We saw in a previous exercise that the mean is Normally distributed. This does not necessarily hold for other statistics, but no worry: as hackers, we can always take bootstrap replicates! In this exercise, you'll generate bootstrap replicates for the variance of the annual rainfall at the Sheffield Weather Station and plot the histogram of the replicates.
+#
+# Here, you will make use of the draw_bs_reps() function you defined a few exercises ago. It is provided below for your reference:
+#
+# def draw_bs_reps(data, func, size=1):
+#     return np.array([bootstrap_replicate_1d(data, func) for _ in range(size)])
+# Instructions
+# 100 XP
+# Draw 10000 bootstrap replicates of the variance in annual rainfall, stored in the rainfall dataset, using your draw_bs_reps() function. Hint: Pass in np.var for computing the variance.
+# Divide your variance replicates (bs_replicates) by 100 to put the variance in units of square centimeters for convenience.
+# Make a histogram of bs_replicates using the normed=True keyword argument and 50 bins.
+
+# Generate 10,000 bootstrap replicates of the variance: bs_replicates
+bs_replicates = draw_bs_reps(rainfall, np.var, 10000)
+
+# Put the variance in units of square centimeters
+bs_replicates = bs_replicates/100
+
+# Make a histogram of the results
+_ = plt.hist(bs_replicates, bins=50, normed=True)
+_ = plt.xlabel('variance of annual rainfall (sq. cm)')
+_ = plt.ylabel('PDF')
+
+# Show the plot
+plt.show()
+
+# Confidence interval on the rate of no-hitters
+# Consider again the inter-no-hitter intervals for the modern era of baseball. Generate 10,000 bootstrap replicates of the optimal parameter τ. Plot a histogram of your replicates and report a 95% confidence interval.
+
+# Generate 10000 bootstrap replicates of τ from the nohitter_times data using your draw_bs_reps() function. Recall that the optimal τ is calculated as the mean of the data.
+# Compute the 95% confidence interval using np.percentile() and passing in two arguments: The array bs_replicates, and the list of percentiles - in this case 2.5 and 97.5.
+# Print the confidence interval.
+# Plot a histogram of your bootstrap replicates. This has been done for you, so hit 'Submit Answer' to see the plot!
+
+# Draw bootstrap replicates of the mean no-hitter time (equal to tau): bs_replicates
+bs_replicates = draw_bs_reps(nohitter_times, np.mean, 10000)
+
+# Compute the 95% confidence interval: conf_int
+conf_int = np.percentile(bs_replicates, [2.5, 97.5])
+
+# Print the confidence interval
+print('95% confidence interval =', conf_int, 'games')
+
+# Plot the histogram of the replicates
+_ = plt.hist(bs_replicates, bins=50, normed=True)
+_ = plt.xlabel(r'$\tau$ (games)')
+_ = plt.ylabel('PDF')
+
+# Show the plot
+plt.show()
+
+# Nonparametric inference means that we did not assume any model underlying the data. The estimates were done using the data alone
+# Make no assumptions about the model or probability distribution underlying the data
+
+# Generate the indices of a numpy array using np.arange function
+
+# A function to do pairs bootstrap
+# As discussed in the video, pairs bootstrap involves resampling pairs of data. Each collection of pairs fit with a line, in this case using np.polyfit(). We do this again and again, getting bootstrap replicates of the parameter values. To have a useful tool for doing pairs bootstrap, you will write a function to perform pairs bootstrap on a set of x,y data.
+
+# Define a function with call signature draw_bs_pairs_linreg(x, y, size=1) to perform pairs bootstrap estimates on linear regression parameters.
+# Use np.arange() to set up an array of indices going from 0 to len(x). These are what you will resample and use them to pick values out of the x and y arrays.
+# Use np.empty() to initialize the slope and intercept replicate arrays to be of size size.
+# Write a for loop to:
+# Resample the indices inds. Use np.random.choice() to do this.
+# Make new x and y arrays bs_x and bs_y using the the resampled indices bs_inds. To do this, slice x and y with bs_inds.
+# Use np.polyfit() on the new x and y arrays and store the computed slope and intercept.
+# Return the pair bootstrap replicates of the slope and intercept.
+
+def draw_bs_pairs_linreg(x, y, size=1):
+    """Perform pairs bootstrap for linear regression."""
+
+    # Set up array of indices to sample from: inds
+    inds = np.arange(0, len(x))
+
+    # Initialize replicates: bs_slope_reps, bs_intercept_reps
+    bs_slope_reps = np.empty(size)
+    bs_intercept_reps = np.empty(size)
+
+    # Generate replicates
+    for i in range(size):
+        bs_inds = np.random.choice(inds, size=len(inds))
+        bs_x, bs_y = x[bs_inds], y[bs_inds]
+        bs_slope_reps[i], bs_intercept_reps[i] = np.polyfit(bs_x, bs_y, deg=1)
+
+    return bs_slope_reps, bs_intercept_reps
+
+# Pairs bootstrap of literacy/fertility data
+# Using the function you just wrote, perform pairs bootstrap to plot a histogram describing the estimate of the slope from the illiteracy/fertility data. Also report the 95% confidence interval of the slope. The data is available to you in the NumPy arrays illiteracy and fertility.
+#
+# As a reminder, draw_bs_pairs_linreg() has a function signature of draw_bs_pairs_linreg(x, y, size=1), and it returns two values: bs_slope_reps and bs_intercept_reps.
+
+# Use your draw_bs_pairs_linreg() function to take 1000 bootstrap replicates of the slope and intercept. The x-axis data is illiteracy and y-axis data is fertility.
+# Compute and print the 95% bootstrap confidence interval for the slope.
+# Plot and show a histogram of the slope replicates. Be sure to label your axes. This has been done for you, so click 'Submit Answer' to see your histogram!
+
+# Generate replicates of slope and intercept using pairs bootstrap
+bs_slope_reps, bs_intercept_reps = draw_bs_pairs_linreg(illiteracy, fertility, 1000)
+
+# Compute and print 95% CI for slope
+print(np.percentile(bs_slope_reps, [2.5, 97.5]))
+
+# Plot the histogram
+_ = plt.hist(bs_slope_reps, bins=50, normed=True)
+_ = plt.xlabel('slope')
+_ = plt.ylabel('PDF')
+plt.show()
+
+# Plotting bootstrap regressions
+# A nice way to visualize the variability we might expect in a linear regression is to plot the line you would get from each bootstrap replicate of the slope and intercept. Do this for the first 100 of your bootstrap replicates of the slope and intercept (stored as bs_slope_reps and bs_intercept_reps).
+
+# Generate an array of x-values consisting of 0 and 100 for the plot of the regression lines. Use the np.array() function for this.
+# Write a for loop in which you plot a regression line with a slope and intercept given by the pairs bootstrap replicates. Do this for 100 lines.
+# When plotting the regression lines in each iteration of the for loop, recall the regression equation y = a*x + b. Here, a is bs_slope_reps[i] and b is bs_intercept_reps[i].
+# Specify the keyword arguments linewidth=0.5, alpha=0.2, and color='red' in your call to plt.plot().
+# Make a scatter plot with illiteracy on the x-axis and fertility on the y-axis. Remember to specify the marker='.' and linestyle='none' keyword arguments.
+# Label the axes, set a 2% margin, and show the plot. This has been done for you, so hit 'Submit Answer' to visualize the bootstrap regressions!
+
+# Generate array of x-values for bootstrap lines: x
+x = np.array([0, 100])
+
+# Plot the bootstrap lines
+for i in range(100):
+    _ = plt.plot(x,
+                 bs_slope_reps[i] *x + bs_intercept_reps[i],
+                 linewidth=0.5, alpha=0.2, color='red')
+
+# Plot the data
+_ = plt.plot(illiteracy,fertility, marker='.', linestyle='none')
+
+# Label axes, set the margins, and show the plot
+_ = plt.xlabel('illiteracy')
+_ = plt.ylabel('fertility')
+plt.margins(0.02)
+plt.show()
+
+# Hypothesis we are testing is typically called the NULL hypothesis
+
+# Generating a permutation sample
+# In the video, you learned that permutation sampling is a great way to simulate the hypothesis that two variables have identical probability distributions. This is often a hypothesis you want to test, so in this exercise, you will write a function to generate a permutation sample from two data sets.
+#
+# Remember, a permutation sample of two arrays having respectively n1 and n2 entries is constructed by concatenating the arrays together, scrambling the contents of the concatenated array, and then taking the first n1 entries as the permutation sample of the first array and the last n2 entries as the permutation sample of the second array.
+
+# Concatenate the two input arrays into one using np.concatenate(). Be sure to pass in data1 and data2 as one argument (data1, data2).
+# Use np.random.permutation() to permute the concatenated array.
+# Store the first len(data1) entries of permuted_data as perm_sample_1 and the last len(data2) entries of permuted_data as perm_sample_2. In practice, this can be achieved by using :len(data1) and len(data1): to slice permuted_data.
+# Return perm_sample_1 and perm_sample_2.
+
+def permutation_sample(data1, data2):
+    """Generate a permutation sample from two data sets."""
+
+    # Concatenate the data sets: data
+    data = np.concatenate((data1, data2))
+
+    # Permute the concatenated array: permuted_data
+    permuted_data = np.random.permutation(data)
+
+    # Split the permuted array into two: perm_sample_1, perm_sample_2
+    perm_sample_1 = permuted_data[:len(data1)]
+    perm_sample_2 = permuted_data[len(data1):]
+
+    return perm_sample_1, perm_sample_2
+
+# Visualizing permutation sampling
+# To help see how permutation sampling works, in this exercise you will generate permutation samples and look at them graphically.
+#
+# We will use the Sheffield Weather Station data again, this time considering the monthly rainfall in July (a dry month) and November (a wet month). We expect these might be differently distributed, so we will take permutation samples to see how their ECDFs would look if they were identically distributed.
+#
+# The data are stored in the Numpy arrays rain_june and rain_november.
+#
+# As a reminder, permutation_sample() has a function signature of permutation_sample(data_1, data_2) with a return value of permuted_data[:len(data_1)], permuted_data[len(data_1):], where permuted_data = np.random.permutation(np.concatenate((data_1, data_2)))
+
+# Write a for loop to 50 generate permutation samples, compute their ECDFs, and plot them.
+# Generate a permutation sample pair from rain_june and rain_november using your permutation_sample() function.
+# Generate the x and y values for an ECDF for each of the two permutation samples for the ECDF using your ecdf() function.
+# Plot the ECDF of the first permutation sample (x_1 and y_1) as dots. Do the same for the second permutation sample (x_2 and y_2).
+# Generate x and y values for ECDFs for the rain_june and rain_november data and plot the ECDFs using respectively the keyword arguments color='red' and color='blue'.
+# Label your axes, set a 2% margin, and show your plot. This has been done for you, so just hit 'Submit Answer' to view the plot!
+
+for _ in range(50):
+    # Generate permutation samples
+    perm_sample_1, perm_sample_2 = permutation_sample(rain_june, rain_november)
+
+
+    # Compute ECDFs
+    x_1, y_1 = ecdf(perm_sample_1)
+    x_2, y_2 = ecdf(perm_sample_2)
+
+    # Plot ECDFs of permutation sample
+    _ = plt.plot(x_1, y_1, marker='.', linestyle='none',
+                 color='red', alpha=0.02)
+    _ = plt.plot(x_2, y_2, marker='.', linestyle='none',
+                 color='blue', alpha=0.02)
+
+# Create and plot ECDFs from original data
+x_1, y_1 = ecdf(rain_june)
+x_2, y_2 = ecdf(rain_november)
+_ = plt.plot(x_1, y_1, marker='.', linestyle='none', color='red')
+_ = plt.plot(x_2, y_2, marker='.', linestyle='none', color='blue')
+
+# Label axes, set margin, and show plot
+plt.margins(0.02)
+_ = plt.xlabel('monthly rainfall (mm)')
+_ = plt.ylabel('ECDF')
+plt.show()
+
+# Generating permutation replicates
+# As discussed in the video, a permutation replicate is a single value of a statistic computed from a permutation sample. As the draw_bs_reps() function you wrote in chapter 2 is useful for you to generate bootstrap replicates, it is useful to have a similar function, draw_perm_reps(), to generate permutation replicates. You will write this useful function in this exercise.
+#
+# The function has call signature draw_perm_reps(data_1, data_2, func, size=1). Importantly, func must be a function that takes two arrays as arguments. In most circumstances, func will be a function you write yourself.
+
+# Define a function with this signature: draw_perm_reps(data_1, data_2, func, size=1).
+# Initialize an array to hold the permutation replicates using np.empty().
+# Write a for loop to:
+# Compute a permutation sample using your permutation_sample() function
+# Pass the samples into func() to compute the replicate and store the result in your array of replicates.
+# Return the array of replicates.
+
+def draw_perm_reps(data_1, data_2, func, size=1):
+    """Generate multiple permutation replicates."""
+
+    # Initialize array of replicates: perm_replicates
+    perm_replicates = np.empty(size)
+
+    for i in range(size):
+        # Generate permutation sample
+        perm_sample_1, perm_sample_2 = permutation_sample(data_1, data_2)
+
+        # Compute the test statistic
+        perm_replicates[i] = func(perm_sample_1, perm_sample_2)
+
+    return perm_replicates
+
+# Look before you leap: EDA before hypothesis testing
+# Kleinteich and Gorb (Sci. Rep., 4, 5225, 2014) performed an interesting experiment with South American horned frogs. They held a plate connected to a force transducer, along with a bait fly, in front of them. They then measured the impact force and adhesive force of the frog's tongue when it struck the target.
+#
+# Frog A is an adult and Frog B is a juvenile. The researchers measured the impact force of 20 strikes for each frog. In the next exercise, we will test the hypothesis that the two frogs have the same distribution of impact forces. But, remember, it is important to do EDA first! Let's make a bee swarm plot for the data. They are stored in a Pandas data frame, df, where column ID is the identity of the frog and column impact_force is the impact force in Newtons (N).
+
+# Use sns.swarmplot() to make a bee swarm plot of the data by specifying the x, y, and data keyword arguments.
+# Label your axes.
+# Show the plot.
+
+# Make bee swarm plot
+_ = sns.swarmplot(x=df.ID, y=df.impact_force, data = df)
+
+# Label axes
+_ = plt.xlabel('frog')
+_ = plt.ylabel('impact force (N)')
+
+# Show the plot
+plt.show()
+
+# Permutation test on frog data
+# The average strike force of Frog A was 0.71 Newtons (N), and that of Frog B was 0.42 N for a difference of 0.29 N. It is possible the frogs strike with the same force and this observed difference was by chance. You will compute the probability of getting at least a 0.29 N difference in mean strike force under the hypothesis that the distributions of strike forces for the two frogs are identical. We use a permutation test with a test statistic of the difference of means to test this hypothesis.
+#
+# For your convenience, the data has been stored in the arrays force_a and force_b.
+
+# Define a function with call signature diff_of_means(data_1, data_2) that returns the differences in means between two data sets, mean of data_1 minus mean of data_2.
+# Use this function to compute the empirical difference of means that was observed in the frogs.
+# Draw 10,000 permutation replicates of the difference of means.
+# Compute the p-value.
+# Print the p-value.
+
+def diff_of_means(data_1, data_2):
+    """Difference in means of two arrays."""
+
+    # The difference of means of data_1, data_2: diff
+    diff = np.mean(data_1) - np.mean(data_2)
+
+    return diff
+
+# Compute difference of mean impact force from experiment: empirical_diff_means
+empirical_diff_means = diff_of_means(force_a, force_b)
+
+# Draw 10,000 permutation replicates: perm_replicates
+perm_replicates = draw_perm_reps(force_a, force_b,
+                                 func=diff_of_means, size=10000)
+
+# Compute p-value: p
+p = np.sum(perm_replicates >= empirical_diff_means) / len(perm_replicates)
+
+# Print the result
+print('p-value =', p)
+
+
+# One sample test
+# Compare one set of data to a single number
+
+# Two sample test
+# Compare two sets of data. Requires the bootstrap
+
+# A one-sample bootstrap hypothesis test
+# Another juvenile frog was studied, Frog C, and you want to see if Frog B and Frog C have similar impact forces. Unfortunately, you do not have Frog C's impact forces available, but you know they have a mean of 0.55 N. Because you don't have the original data, you cannot do a permutation test, and you cannot assess the hypothesis that the forces from Frog B and Frog C come from the same distribution. You will therefore test another, less restrictive hypothesis: The mean strike force of Frog B is equal to that of Frog C.
+#
+# To set up the bootstrap hypothesis test, you will take the mean as our test statistic. Remember, your goal is to calculate the probability of getting a mean impact force less than or equal to what was observed for Frog B if the hypothesis that the true mean of Frog B's impact forces is equal to that of Frog C is true. You first translate all of the data of Frog B such that the mean is 0.55 N. This involves adding the mean force of Frog C and subtracting the mean force of Frog B from each measurement of Frog B. This leaves other properties of Frog B's distribution, such as the variance, unchanged.
+
+# Translate the impact forces of Frog B such that its mean is 0.55 N.
+# Use your draw_bs_reps() function to take 10,000 bootstrap replicates of the mean of your translated forces.
+# Compute the p-value by finding the fraction of your bootstrap replicates that are less than the observed mean impact force of Frog B. Note that the variable of interest here is force_b.
+# Print your p-value.
+
+# Make an array of translated impact forces: translated_force_b
+translated_force_b = force_b - np.mean(force_b) + 0.55
+
+# Take bootstrap replicates of Frog B's translated impact forces: bs_replicates
+bs_replicates = draw_bs_reps(translated_force_b, np.mean, 10000)
+
+# Compute fraction of replicates that are less than the observed Frog B force: p
+p = np.sum(bs_replicates <= np.mean(force_b)) / 10000
+
+# Print the p-value
+print('p = ', p)
+
+# A two-sample bootstrap hypothesis test for difference of means
+# We now want to test the hypothesis that Frog A and Frog B have the same mean impact force, but not necessarily the same distribution, which is also impossible with a permutation test.
+#
+# To do the two-sample bootstrap test, we shift both arrays to have the same mean, since we are simulating the hypothesis that their means are, in fact, equal. We then draw bootstrap samples out of the shifted arrays and compute the difference in means. This constitutes a bootstrap replicate, and we generate many of them. The p-value is the fraction of replicates with a difference in means greater than or equal to what was observed.
+#
+# The objects forces_concat and empirical_diff_means are already in your namespace.
+
+# Compute the mean of all forces (from forces_concat) using np.mean().
+# Generate shifted data sets for both force_a and force_b such that the mean of each is the mean of the concatenated array of impact forces.
+# Generate 10,000 bootstrap replicates of the mean each for the two shifted arrays.
+# Compute the bootstrap replicates of the difference of means by subtracting the replicates of the shifted impact force of Frog B from those of Frog A.
+# Compute and print the p-value from your bootstrap replicates.
+
+# Compute mean of all forces: mean_force
+mean_force = np.mean(forces_concat)
+
+# Generate shifted arrays
+force_a_shifted = force_a - np.mean(force_a) + mean_force
+force_b_shifted = force_b - np.mean(force_b) + mean_force
+
+# Compute 10,000 bootstrap replicates from shifted arrays
+bs_replicates_a = draw_bs_reps(force_a_shifted, np.mean, 10000)
+bs_replicates_b = draw_bs_reps(force_b_shifted, np.mean, 10000)
+
+# Get replicates of difference of means: bs_replicates
+bs_replicates = bs_replicates_a - bs_replicates_b
+
+# Compute and print p-value: p
+p = np.sum(bs_replicates >= empirical_diff_means) / len(bs_replicates)
+print('p-value =', p)
+
+# used by organization to see if a strategy change gives a better result
+
+# The vote for the Civil Rights Act in 1964
+# The Civil Rights Act of 1964 was one of the most important pieces of legislation ever passed in the USA. Excluding "present" and "abstain" votes, 153 House Democrats and 136 Republicans voted yea. However, 91 Democrats and 35 Republicans voted nay. Did party affiliation make a difference in the vote?
+#
+# To answer this question, you will evaluate the hypothesis that the party of a House member has no bearing on his or her vote. You will use the fraction of Democrats voting in favor as your test statistic and evaluate the probability of observing a fraction of Democrats voting in favor at least as small as the observed fraction of 153/244. (That's right, at least as small as. In 1964, it was the Democrats who were less progressive on civil rights issues.) To do this, permute the party labels of the House voters and then arbitrarily divide them into "Democrats" and "Republicans" and compute the fraction of Democrats voting yea.
+
+# Construct Boolean arrays, dems and reps that contain the votes of the respective parties; e.g., dems has 153 True entries and 91 False entries.
+# Write a function, frac_yea_dems(dems, reps) that returns the fraction of Democrats that voted yea. The first input is an array of Booleans, Two inputs are required to use your draw_perm_reps() function, but the second is not used.
+# Use your draw_perm_reps() function to draw 10,000 permutation replicates of the fraction of Democrat yea votes.
+# Compute and print the p-value.
+
+# Construct arrays of data: dems, reps
+dems = np.array([True] * 153 + [False] * 91)
+reps = np.array([True] * 136 + [False] * 35)
+
+def frac_yea_dems(dems, reps):
+    """Compute fraction of Democrat yea votes."""
+    frac = np.sum(dems) / len(dems)
+    return frac
+
+# Acquire permutation samples: perm_replicates
+perm_replicates = draw_perm_reps(dems, reps, frac_yea_dems, 10000)
+
+# Compute and print p-value: p
+p = np.sum(perm_replicates <= 153/244) / len(perm_replicates)
+print('p-value =', p)
+
+# Great work! This small p-value suggests that party identity had a lot to do with the voting. Importantly, the South had a higher fraction of Democrat representatives, and consequently also a more racist bias.
+
+# A time-on-website analog
+# It turns out that you already did a hypothesis test analogous to an A/B test where you are interested in how much time is spent on the website before and after an ad campaign. The frog tongue force (a continuous quantity like time on the website) is an analog. "Before" = Frog A and "after" = Frog B. Let's practice this again with something that actually is a before/after scenario.
+#
+# We return to the no-hitter data set. In 1920, Major League Baseball implemented important rule changes that ended the so-called dead ball era. Importantly, the pitcher was no longer allowed to spit on or scuff the ball, an activity that greatly favors pitchers. In this problem you will perform an A/B test to determine if these rule changes resulted in a slower rate of no-hitters (i.e., longer average time between no-hitters) using the difference in mean inter-no-hitter time as your test statistic. The inter-no-hitter times for the respective eras are stored in the arrays nht_dead and nht_live, where "nht" is meant to stand for "no-hitter time."
+#
+# Since you will be using your draw_perm_reps() function in this exercise, it may be useful to remind yourself of its call signature: draw_perm_reps(d1, d2, func, size=1) or even referring back to the chapter 3 exercise in which you defined it.
+
+# Compute the observed difference in mean inter-nohitter time using diff_of_means().
+# Generate 10,000 permutation replicates of the difference of means using draw_perm_reps().
+# Compute and print the p-value.
+
